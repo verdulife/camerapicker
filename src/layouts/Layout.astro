@@ -1,0 +1,58 @@
+---
+import "@/styles/global.css";
+import { metadata } from "@/lib/metadata";
+
+const { title, description, image, name } = metadata;
+const { site, url } = Astro;
+const { pathname } = url;
+const canonicalUrl = new URL(pathname, site).href;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, viewport-fit=cover" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" type="image/png" href="/mobile.png" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content={name} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta name="author" content="verdu | verdu@live.com" />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:url" content={Astro.site} />
+    <meta property="og:image" content={image} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={title} />
+
+    <script type="application/ld+json" is:inline>
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Camera Picker",
+        "url": "https://camerapicker.vercel.app/"
+      }
+    </script>
+  </head>
+  <body
+    class="flex h-svh flex-col overflow-clip bg-neutral-950 text-neutral-100"
+  >
+    <main class="flex flex-1 flex-col items-center">
+      <slot />
+    </main>
+  </body>
+</html>

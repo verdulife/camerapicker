@@ -1,0 +1,145 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout>
+  <div class="relative h-screen w-full">
+    <video
+      id="video"
+      class="absolute top-0 left-0 h-full w-full object-cover"
+      playsinline
+      autoplay
+      muted></video>
+    <canvas
+      id="canvas"
+      class="pointer-events-none absolute top-0 left-0 h-full w-full"></canvas>
+  </div>
+</Layout>
+
+<script>
+  const video = document.getElementById("video") as HTMLVideoElement;
+  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d");
+
+  let selection = { x: 0, y: 0, size: 100 };
+  let targetSelection = { x: 0, y: 0 };
+
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "environment" },
+    audio: false,
+  });
+
+  video.srcObject = stream;
+
+  video.addEventListener("loadedmetadata", () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Inicializar la zona en el centro
+    selection.x = targetSelection.x = video.videoWidth / 2 - selection.size / 2;
+    selection.y = targetSelection.y =
+      video.videoHeight / 2 - selection.size / 2;
+
+    drawSelection();
+    animateSelection();
+    analyzeColor();
+  });
+
+  function drawSelection() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Dibujar la zona seleccionada con esquinas redondeadas
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(selection.x, selection.y, selection.size, selection.size, 10);
+    ctx.stroke();
+
+    // Simular zoom en la zona seleccionada
+    const zoomFactor = 3;
+    const zoomCanvas = document.createElement("canvas");
+    const zoomCtx = zoomCanvas.getContext("2d");
+
+    zoomCanvas.width = selection.size * zoomFactor;
+    zoomCanvas.height = selection.size * zoomFactor;
+
+    if (zoomCtx) {
+      zoomCtx.imageSmoothingEnabled = true;
+      zoomCtx.drawImage(
+        video,
+        selection.x,
+        selection.y,
+        selection.size,
+        selection.size,
+        0,
+        0,
+        zoomCanvas.width,
+        zoomCanvas.height
+      );
+      ctx.drawImage(
+        zoomCanvas,
+        selection.x - selection.size,
+        selection.y - selection.size / 2
+      );
+    }
+  }
+
+  function analyzeColor() {
+    if (!ctx) return;
+
+    const imageData = ctx.getImageData(
+      selection.x,
+      selection.y,
+      selection.size,
+      selection.size
+    );
+    const pixels = imageData.data;
+
+    let r = 0,
+      g = 0,
+      b = 0,
+      a = 0;
+    const totalPixels = selection.size * selection.size;
+
+    for (let i = 0; i < pixels.length; i += 4) {
+      r += pixels[i];
+      g += pixels[i + 1];
+      b += pixels[i + 2];
+      a += pixels[i + 3];
+    }
+
+    r = Math.floor(r / totalPixels);
+    g = Math.floor(g / totalPixels);
+    b = Math.floor(b / totalPixels);
+    a = Math.floor(a / totalPixels);
+
+    console.log(`RGBA: (${r}, ${g}, ${b}, ${a})`);
+
+    requestAnimationFrame(analyzeColor);
+  }
+
+  function animateSelection() {
+    selection.x += (targetSelection.x - selection.x) * 0.2;
+    selection.y += (targetSelection.y - selection.y) * 0.2;
+    drawSelection();
+    requestAnimationFrame(animateSelection);
+  }
+
+  function updateSelection(event: MouseEvent | TouchEvent) {
+    const rect = video.getBoundingClientRect();
+    const scaleX = video.videoWidth / rect.width;
+    const scaleY = video.videoHeight / rect.height;
+
+    const clientX =
+      "touches" in event ? event.touches[0].clientX : event.clientX;
+    const clientY =
+      "touches" in event ? event.touches[0].clientY : event.clientY;
+
+    targetSelection.x = (clientX - rect.left) * scaleX - selection.size / 2;
+    targetSelection.y = (clientY - rect.top) * scaleY - selection.size / 2;
+  }
+
+  video.addEventListener("click", updateSelection);
+  video.addEventListener("touchstart", updateSelection);
+</script>
