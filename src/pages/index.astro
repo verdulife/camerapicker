@@ -32,7 +32,7 @@ import Layout from "@/layouts/Layout.astro";
   const rgbOut = document.querySelector("#rgbOut") as HTMLParagraphElement;
   const ctx = canvas.getContext("2d");
 
-  let selection = { x: 0, y: 0, size: 65, zoom: 2 };
+  let selection = { x: 0, y: 0, size: 65, zoom: 1.25 };
   let targetSelection = { x: 0, y: 0 };
 
   const { innerWidth, innerHeight } = window;
@@ -40,8 +40,7 @@ import Layout from "@/layouts/Layout.astro";
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
       facingMode: "environment",
-      width: innerWidth,
-      height: innerHeight,
+      aspectRatio: innerHeight / innerWidth
     },
     audio: false,
   });
@@ -75,8 +74,8 @@ import Layout from "@/layouts/Layout.astro";
     zoomCtx.imageSmoothingEnabled = true;
     zoomCtx.drawImage(
       video,
-      selection.x + selection.size / selection.zoom,
-      selection.y + selection.size / selection.zoom,
+      selection.x + selection.size / selection.zoom / 2,
+      selection.y,
       selection.size,
       selection.size,
       0,
@@ -91,7 +90,7 @@ import Layout from "@/layouts/Layout.astro";
 
     ctx.drawImage(
       zoomCanvas,
-      selection.x,
+      selection.x + selection.size / selection.zoom / 2,
       selection.y,
       selection.size * selection.zoom,
       selection.size * selection.zoom

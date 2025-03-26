@@ -51,8 +51,6 @@ const canonicalUrl = new URL(pathname, site).href;
   <body
     class="flex h-svh flex-col overflow-clip bg-neutral-950 text-neutral-100"
   >
-    <main class="flex flex-1 flex-col items-center">
-      <slot />
-    </main>
+    <slot />
   </body>
 </html>
