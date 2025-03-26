@@ -3,42 +3,57 @@ import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
-  <div class="relative h-screen w-full">
+  <section class="relative size-full">
     <video
-      id="video"
-      class="absolute top-0 left-0 h-full w-full object-cover"
+      class="absolute inset-0 size-full object-contain"
       playsinline
       autoplay
-      muted></video>
-    <canvas
-      id="canvas"
-      class="pointer-events-none absolute top-0 left-0 h-full w-full"></canvas>
-  </div>
+      muted
+    >
+    </video>
+
+    <canvas class="pointer-events-none absolute inset-0"></canvas>
+
+    <footer
+      class="absolute right-0 bottom-6 left-0 mx-auto flex max-w-2xs items-center gap-6 overflow-clip rounded-lg bg-white"
+    >
+      <picture class="size-20"></picture>
+      <aside class="text-lg font-medium text-black">
+        <p id="rgbOut">rgb(0, 0, 0)</p>
+      </aside>
+    </footer>
+  </section>
 </Layout>
 
 <script>
-  const video = document.getElementById("video") as HTMLVideoElement;
-  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  const video = document.querySelector("video") as HTMLVideoElement;
+  const canvas = document.querySelector("canvas") as HTMLCanvasElement;
+  const picture = document.querySelector("picture") as HTMLPictureElement;
+  const rgbOut = document.querySelector("#rgbOut") as HTMLParagraphElement;
   const ctx = canvas.getContext("2d");
 
-  let selection = { x: 0, y: 0, size: 100 };
+  let selection = { x: 0, y: 0, size: 65, zoom: 2 };
   let targetSelection = { x: 0, y: 0 };
 
+  const { innerWidth, innerHeight } = window;
+
   const stream = await navigator.mediaDevices.getUserMedia({
-    video: { facingMode: "environment" },
+    video: {
+      facingMode: "environment",
+      width: innerWidth,
+      height: innerHeight,
+    },
     audio: false,
   });
 
   video.srcObject = stream;
 
-  video.addEventListener("loadedmetadata", () => {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
 
-    // Inicializar la zona en el centro
-    selection.x = targetSelection.x = video.videoWidth / 2 - selection.size / 2;
-    selection.y = targetSelection.y =
-      video.videoHeight / 2 - selection.size / 2;
+  video.addEventListener("loadedmetadata", () => {
+    selection.x = targetSelection.x = innerWidth / 2 - selection.size;
+    selection.y = targetSelection.y = innerHeight / 2 - selection.size;
 
     drawSelection();
     animateSelection();
@@ -47,42 +62,40 @@ import Layout from "@/layouts/Layout.astro";
 
   function drawSelection() {
     if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
 
-    // Dibujar la zona seleccionada con esquinas redondeadas
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(selection.x, selection.y, selection.size, selection.size, 10);
-    ctx.stroke();
-
-    // Simular zoom en la zona seleccionada
-    const zoomFactor = 3;
     const zoomCanvas = document.createElement("canvas");
     const zoomCtx = zoomCanvas.getContext("2d");
 
-    zoomCanvas.width = selection.size * zoomFactor;
-    zoomCanvas.height = selection.size * zoomFactor;
+    zoomCanvas.width = selection.size;
+    zoomCanvas.height = selection.size;
 
-    if (zoomCtx) {
-      zoomCtx.imageSmoothingEnabled = true;
-      zoomCtx.drawImage(
-        video,
-        selection.x,
-        selection.y,
-        selection.size,
-        selection.size,
-        0,
-        0,
-        zoomCanvas.width,
-        zoomCanvas.height
-      );
-      ctx.drawImage(
-        zoomCanvas,
-        selection.x - selection.size,
-        selection.y - selection.size / 2
-      );
-    }
+    if (!zoomCtx) return;
+
+    zoomCtx.imageSmoothingEnabled = true;
+    zoomCtx.drawImage(
+      video,
+      selection.x + selection.size / selection.zoom,
+      selection.y + selection.size / selection.zoom,
+      selection.size,
+      selection.size,
+      0,
+      0,
+      zoomCanvas.width * selection.zoom,
+      zoomCanvas.height * selection.zoom
+    );
+
+    zoomCtx.strokeStyle = "white";
+    zoomCtx.lineWidth = 1;
+    zoomCtx.strokeRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+
+    ctx.drawImage(
+      zoomCanvas,
+      selection.x,
+      selection.y,
+      selection.size * selection.zoom,
+      selection.size * selection.zoom
+    );
   }
 
   function analyzeColor() {
@@ -115,8 +128,13 @@ import Layout from "@/layouts/Layout.astro";
     a = Math.floor(a / totalPixels);
 
     console.log(`RGBA: (${r}, ${g}, ${b}, ${a})`);
-
+    printResult({ r, g, b });
     requestAnimationFrame(analyzeColor);
+  }
+
+  function printResult({ r, g, b }: { r: number; g: number; b: number }) {
+    picture.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    rgbOut.textContent = `rgb(${r}, ${g}, ${b})`;
   }
 
   function animateSelection() {
@@ -127,17 +145,13 @@ import Layout from "@/layouts/Layout.astro";
   }
 
   function updateSelection(event: MouseEvent | TouchEvent) {
-    const rect = video.getBoundingClientRect();
-    const scaleX = video.videoWidth / rect.width;
-    const scaleY = video.videoHeight / rect.height;
-
     const clientX =
       "touches" in event ? event.touches[0].clientX : event.clientX;
     const clientY =
       "touches" in event ? event.touches[0].clientY : event.clientY;
 
-    targetSelection.x = (clientX - rect.left) * scaleX - selection.size / 2;
-    targetSelection.y = (clientY - rect.top) * scaleY - selection.size / 2;
+    targetSelection.x = clientX - selection.size;
+    targetSelection.y = clientY - selection.size;
   }
 
   video.addEventListener("click", updateSelection);
