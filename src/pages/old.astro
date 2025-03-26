@@ -5,10 +5,10 @@ import Layout from "@/layouts/Layout.astro";
 <Layout>
   <section class="relative size-full">
     <video
+      class="absolute top-0 left-0 size-auto"
       playsinline
       autoplay
       muted
-      class="absolute top-0 left-0 size-full object-cover"
     >
     </video>
 
@@ -30,43 +30,42 @@ import Layout from "@/layouts/Layout.astro";
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
   const picture = document.querySelector("picture") as HTMLPictureElement;
   const rgbOut = document.querySelector("#rgbOut") as HTMLParagraphElement;
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  const zoomCanvas = document.createElement("canvas");
-  const zoomCtx = zoomCanvas.getContext("2d");
-  const { innerWidth, innerHeight } = window;
+  const ctx = canvas.getContext("2d");
 
   let selection = { x: 0, y: 0, size: 65, zoom: 2 };
   let targetSelection = { x: 0, y: 0 };
 
+  const { innerWidth, innerHeight } = window;
+
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
       facingMode: "environment",
-      aspectRatio: innerWidth / innerHeight,
       width: innerWidth,
+      height: innerHeight,
     },
     audio: false,
   });
 
   video.srcObject = stream;
 
-  video.addEventListener("loadedmetadata", () => {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
 
+  video.addEventListener("loadedmetadata", () => {
     selection.x = targetSelection.x = innerWidth / 2 - selection.size;
     selection.y = targetSelection.y = innerHeight / 2 - selection.size;
 
     drawSelection();
     animateSelection();
     analyzeColor();
-
-    const { videoWidth, videoHeight } = video;
-    console.log({ innerWidth, innerHeight, videoWidth, videoHeight });
   });
 
   function drawSelection() {
     if (!ctx) return;
     ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+    const zoomCanvas = document.createElement("canvas");
+    const zoomCtx = zoomCanvas.getContext("2d");
 
     zoomCanvas.width = selection.size;
     zoomCanvas.height = selection.size;
@@ -128,6 +127,7 @@ import Layout from "@/layouts/Layout.astro";
     b = Math.floor(b / totalPixels);
     a = Math.floor(a / totalPixels);
 
+    console.log(`RGBA: (${r}, ${g}, ${b}, ${a})`);
     printResult({ r, g, b });
     requestAnimationFrame(analyzeColor);
   }

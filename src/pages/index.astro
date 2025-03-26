@@ -5,67 +5,83 @@ import Layout from "@/layouts/Layout.astro";
 <Layout>
   <section class="relative size-full">
     <video
-      class="absolute top-0 left-0 size-auto"
       playsinline
       autoplay
       muted
+      class="absolute top-0 left-0 size-full object-cover"
     >
     </video>
 
     <canvas class="pointer-events-none absolute inset-0"></canvas>
 
     <footer
-      class="absolute right-0 bottom-6 left-0 mx-auto flex max-w-2xs items-center gap-6 overflow-clip rounded-lg bg-white"
+      class="absolute right-0 bottom-6 left-0 mx-auto flex max-w-2xs items-stretch overflow-clip rounded-lg border border-neutral-800"
     >
-      <picture class="size-20"></picture>
-      <aside class="text-lg font-medium text-black">
-        <p id="rgbOut">rgb(0, 0, 0)</p>
+      <picture class="w-24"></picture>
+      <aside
+        class="flex grow flex-col justify-between bg-black/20 text-xs font-semibold backdrop-blur"
+      >
+        <p id="rgbOut" class="w-full border-b border-neutral-800 px-4 py-2">
+          rgb(0, 0, 0)
+        </p>
+        <p id="hexOut" class="w-full border-b border-neutral-800 px-4 py-2">
+          #000000
+        </p>
+        <p id="cmykOut" class="w-full px-4 py-2">0C 0M 0Y 0K</p>
       </aside>
     </footer>
   </section>
 </Layout>
 
 <script>
+  import type { RGB } from "@/lib/types";
+  import { rgbToHex, rgbToCmyk } from "@/lib/colors";
+
   const video = document.querySelector("video") as HTMLVideoElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
   const picture = document.querySelector("picture") as HTMLPictureElement;
   const rgbOut = document.querySelector("#rgbOut") as HTMLParagraphElement;
-  const ctx = canvas.getContext("2d");
-
-  let selection = { x: 0, y: 0, size: 65, zoom: 2 };
-  let targetSelection = { x: 0, y: 0 };
-
+  const hexOut = document.querySelector("#hexOut") as HTMLParagraphElement;
+  const cmykOut = document.querySelector("#cmykOut") as HTMLParagraphElement;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const zoomCanvas = document.createElement("canvas");
+  const zoomCtx = zoomCanvas.getContext("2d");
   const { innerWidth, innerHeight } = window;
 
+  let selection = { x: 0, y: 0, size: 75, zoom: 1.25 };
+  let targetSelection = { x: 0, y: 0 };
+
   const stream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
     video: {
       facingMode: "environment",
+      aspectRatio: innerWidth / innerHeight,
       width: innerWidth,
-      height: innerHeight,
     },
-    audio: false,
   });
 
   video.srcObject = stream;
 
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-
   video.addEventListener("loadedmetadata", () => {
-    selection.x = targetSelection.x = innerWidth / 2 - selection.size;
-    selection.y = targetSelection.y = innerHeight / 2 - selection.size;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    selection.x = targetSelection.x =
+      innerWidth / 2 - (selection.size * selection.zoom) / 2;
+    selection.y = targetSelection.y =
+      innerHeight / 2 - selection.size * selection.zoom;
 
     drawSelection();
     animateSelection();
     analyzeColor();
+
+    const { videoWidth, videoHeight } = video;
+    console.log({ innerWidth, innerHeight, videoWidth, videoHeight });
   });
 
   function drawSelection() {
     if (!ctx) return;
     ctx.clearRect(0, 0, innerWidth, innerHeight);
-
-    const zoomCanvas = document.createElement("canvas");
-    const zoomCtx = zoomCanvas.getContext("2d");
 
     zoomCanvas.width = selection.size;
     zoomCanvas.height = selection.size;
@@ -75,8 +91,8 @@ import Layout from "@/layouts/Layout.astro";
     zoomCtx.imageSmoothingEnabled = true;
     zoomCtx.drawImage(
       video,
-      selection.x + selection.size / selection.zoom,
-      selection.y + selection.size / selection.zoom,
+      selection.x + selection.size / 4,
+      selection.y + selection.size / 4,
       selection.size,
       selection.size,
       0,
@@ -107,34 +123,33 @@ import Layout from "@/layouts/Layout.astro";
       selection.size,
       selection.size
     );
+
     const pixels = imageData.data;
+    const totalPixels = selection.size * selection.size;
 
     let r = 0,
       g = 0,
-      b = 0,
-      a = 0;
-    const totalPixels = selection.size * selection.size;
+      b = 0;
 
     for (let i = 0; i < pixels.length; i += 4) {
       r += pixels[i];
       g += pixels[i + 1];
       b += pixels[i + 2];
-      a += pixels[i + 3];
     }
 
     r = Math.floor(r / totalPixels);
     g = Math.floor(g / totalPixels);
     b = Math.floor(b / totalPixels);
-    a = Math.floor(a / totalPixels);
 
-    console.log(`RGBA: (${r}, ${g}, ${b}, ${a})`);
     printResult({ r, g, b });
     requestAnimationFrame(analyzeColor);
   }
 
-  function printResult({ r, g, b }: { r: number; g: number; b: number }) {
+  function printResult({ r, g, b }: RGB) {
     picture.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
     rgbOut.textContent = `rgb(${r}, ${g}, ${b})`;
+    hexOut.textContent = rgbToHex({ r, g, b });
+    cmykOut.textContent = rgbToCmyk({ r, g, b });
   }
 
   function animateSelection() {
@@ -150,8 +165,8 @@ import Layout from "@/layouts/Layout.astro";
     const clientY =
       "touches" in event ? event.touches[0].clientY : event.clientY;
 
-    targetSelection.x = clientX - selection.size;
-    targetSelection.y = clientY - selection.size;
+    targetSelection.x = clientX - (selection.size * selection.zoom) / 2;
+    targetSelection.y = clientY - (selection.size * selection.zoom) / 2;
   }
 
   video.addEventListener("click", updateSelection);
