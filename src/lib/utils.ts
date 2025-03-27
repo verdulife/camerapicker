@@ -1,1 +1,1 @@
-export const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+export const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;

@@ -61,7 +61,7 @@ import Layout from "@/layouts/Layout.astro";
 
 <script>
   import { rgbToHex, rgbToCmyk } from "@/lib/colors";
-  import { isIOS } from "@/lib/utils";
+  import { isTouchDevice } from "@/lib/utils";
 
   const video = document.querySelector("video") as HTMLVideoElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
@@ -81,7 +81,7 @@ import Layout from "@/layouts/Layout.astro";
   let rgb_values = { r: 0, g: 0, b: 0 };
   let current_selection = "rgb";
 
-  const videoOpts = isIOS
+  const videoOpts = isTouchDevice
     ? {
         facingMode: "environment",
         aspectRatio: innerHeight / innerWidth,
