@@ -2,6 +2,8 @@
 
 @theme {
   --font-sans: "Inter", sans-serif;
+  --color-violet: #1b1464;
+  --color-magenta: #ed1e79;
 }
 
 * {

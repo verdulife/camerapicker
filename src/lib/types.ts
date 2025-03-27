@@ -3,3 +3,5 @@ export interface RGB {
   g: number;
   b: number;
 }
+
+export type ColorSpace = "rgb" | "hex" | "cmyk";

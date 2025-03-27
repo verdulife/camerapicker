@@ -8,11 +8,23 @@ import Layout from "@/layouts/Layout.astro";
       class="absolute top-0 left-0 z-20 flex w-full -translate-y-full justify-center p-4 transition-transform"
     >
       <p
-        class="rounded-full border border-green-900/20 bg-green-400/80 px-4 py-2 text-center font-medium text-green-900 backdrop-blur"
+        class="bg-magenta/80 rounded-full border border-neutral-900/20 px-4 py-2 text-center font-medium text-neutral-900 backdrop-blur"
       >
         Color copiado en el 📋
       </p>
     </header>
+
+    <nav>
+      <a href="/" class="absolute top-0 left-0 z-20 p-4">
+        <img src="/logo.svg" alt="Logo" class="hidden h-10 lg:block" />
+
+        <img
+          src="/imago.svg"
+          alt="Logo"
+          class="h-10 origin-top-left translate-x-10 rotate-90 lg:hidden"
+        />
+      </a>
+    </nav>
 
     <video
       playsinline
@@ -25,26 +37,24 @@ import Layout from "@/layouts/Layout.astro";
     <canvas class="pointer-events-none absolute inset-0"></canvas>
 
     <footer
-      class="absolute right-0 bottom-6 left-0 mx-auto flex max-w-xs items-stretch gap-4 overflow-clip rounded-full border border-neutral-900/50 bg-black/50 p-2 shadow shadow-black backdrop-blur"
+      class="bg-violet/70 absolute right-0 bottom-6 left-0 mx-auto flex max-w-xs items-stretch gap-4 overflow-clip rounded-full border border-neutral-50/20 p-2 shadow backdrop-blur"
     >
       <button
-        class="w-22 shrink-0 cursor-pointer rounded-full border-2 border-white shadow shadow-black"
+        class="w-22 shrink-0 cursor-pointer rounded-full border-2 border-white shadow"
       >
       </button>
 
       <aside class="flex flex-col justify-between">
-        <select
-          class="size-full appearance-none py-4 text-xl font-medium outline-none"
-        >
-          <optgroup label="RGB" class="bg-black text-white">
+        <select class="size-full appearance-none py-4 font-medium outline-none">
+          <optgroup label="RGB" class="bg-violet text-white">
             <option value="rgb">rgb(0, 0, 0)</option>
           </optgroup>
 
-          <optgroup label="Hexadecimal" class="bg-black text-white">
+          <optgroup label="Hexadecimal" class="bg-violet text-white">
             <option value="hex">#000000</option>
           </optgroup>
 
-          <optgroup label="CMYK" class="bg-black text-white">
+          <optgroup label="CMYK" class="bg-violet text-white">
             <option value="cmyk">0C 0M 0Y 0K</option>
           </optgroup>
         </select>
@@ -53,15 +63,16 @@ import Layout from "@/layouts/Layout.astro";
   </section>
 </Layout>
 
-<style is:inline>
+<style>
   header.active {
     translate: 0;
   }
 </style>
 
 <script>
+  import type { ColorSpace } from "@/lib/types";
   import { rgbToHex, rgbToCmyk } from "@/lib/colors";
-  import { isTouchDevice } from "@/lib/utils";
+  import { isTouchDevice, saveColorSpace, loadColorSpace } from "@/lib/utils";
 
   const video = document.querySelector("video") as HTMLVideoElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
@@ -76,10 +87,11 @@ import Layout from "@/layouts/Layout.astro";
   const zoomCtx = zoomCanvas.getContext("2d");
   const { innerWidth, innerHeight } = window;
 
-  let selection = { x: 0, y: 0, size: 50, zoom: 1.25 };
+  let selection = { x: 0, y: 0, size: 65, zoom: 1.25 };
   let targetSelection = { x: 0, y: 0 };
   let rgb_values = { r: 0, g: 0, b: 0 };
-  let current_selection = "rgb";
+  let currentColorSpace: ColorSpace = loadColorSpace();
+  select.value = currentColorSpace;
 
   const videoOpts = isTouchDevice
     ? {
@@ -111,21 +123,29 @@ import Layout from "@/layouts/Layout.astro";
     drawSelection();
     animateSelection();
     analyzeColor();
-
-    const { videoWidth, videoHeight } = video;
-    console.log({ innerWidth, innerHeight, videoWidth, videoHeight });
   });
 
   function drawSelection() {
-    if (!ctx) return;
+    if (!ctx || !zoomCtx) return;
+
     ctx.clearRect(0, 0, innerWidth, innerHeight);
 
     zoomCanvas.width = selection.size;
     zoomCanvas.height = selection.size;
 
-    if (!zoomCtx) return;
-
     zoomCtx.imageSmoothingEnabled = true;
+    zoomCtx.save();
+    zoomCtx.beginPath();
+    zoomCtx.arc(
+      zoomCanvas.width / 2,
+      zoomCanvas.height / 2,
+      zoomCanvas.width / 2,
+      0,
+      Math.PI * 2
+    );
+    zoomCtx.closePath();
+    zoomCtx.clip();
+
     zoomCtx.drawImage(
       video,
       selection.x + selection.size / 4,
@@ -138,9 +158,51 @@ import Layout from "@/layouts/Layout.astro";
       zoomCanvas.height * selection.zoom
     );
 
+    zoomCtx.restore();
     zoomCtx.strokeStyle = "white";
     zoomCtx.lineWidth = 1;
-    zoomCtx.strokeRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+    zoomCtx.beginPath();
+    zoomCtx.arc(
+      zoomCanvas.width / 2,
+      zoomCanvas.height / 2,
+      zoomCanvas.width / 2,
+      0,
+      Math.PI * 2
+    );
+    zoomCtx.stroke();
+
+    zoomCtx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+    zoomCtx.lineWidth = 0.4;
+
+    const gridSize = 6;
+    const numLinesX = zoomCanvas.width / gridSize;
+    const numLinesY = zoomCanvas.height / gridSize;
+
+    for (let i = 0; i <= numLinesX; i++) {
+      zoomCtx.beginPath();
+      zoomCtx.moveTo(i * gridSize, 0);
+      zoomCtx.lineTo(i * gridSize, zoomCanvas.height);
+      zoomCtx.stroke();
+    }
+
+    for (let i = 0; i <= numLinesY; i++) {
+      zoomCtx.beginPath();
+      zoomCtx.moveTo(0, i * gridSize);
+      zoomCtx.lineTo(zoomCanvas.width, i * gridSize);
+      zoomCtx.stroke();
+    }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(
+      selection.x + (selection.size * selection.zoom) / 2,
+      selection.y + (selection.size * selection.zoom) / 2,
+      (selection.size * selection.zoom) / 2,
+      0,
+      Math.PI * 2
+    );
+    ctx.closePath();
+    ctx.clip();
 
     ctx.drawImage(
       zoomCanvas,
@@ -149,6 +211,19 @@ import Layout from "@/layouts/Layout.astro";
       selection.size * selection.zoom,
       selection.size * selection.zoom
     );
+    ctx.restore();
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(
+      selection.x + (selection.size * selection.zoom) / 2,
+      selection.y + (selection.size * selection.zoom) / 2,
+      (selection.size * selection.zoom) / 2,
+      0,
+      Math.PI * 2
+    );
+    ctx.stroke();
   }
 
   function analyzeColor() {
@@ -187,9 +262,9 @@ import Layout from "@/layouts/Layout.astro";
     const { r, g, b } = rgb_values;
 
     button.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-    rgbOut.textContent = `rgb(${r}, ${g}, ${b})`;
-    hexOut.textContent = rgbToHex({ r, g, b });
-    cmykOut.textContent = rgbToCmyk({ r, g, b });
+    rgbOut.innerHTML = `rgb(${r}, ${g}, ${b})`;
+    hexOut.innerHTML = rgbToHex({ r, g, b });
+    cmykOut.innerHTML = rgbToCmyk({ r, g, b });
   }
 
   function animateSelection() {
@@ -213,17 +288,18 @@ import Layout from "@/layouts/Layout.astro";
   video.addEventListener("touchstart", updateSelection);
 
   select.addEventListener("change", (event: any) => {
-    current_selection = event.target.value;
+    currentColorSpace = event.target.value;
+    saveColorSpace(currentColorSpace);
   });
 
   button.addEventListener("click", () => {
     const { r, g, b } = rgb_values;
 
-    if (current_selection === "rgb")
+    if (currentColorSpace === "rgb")
       navigator.clipboard.writeText(`rgb(${r}, ${g}, ${b})`);
-    if (current_selection === "hex")
+    if (currentColorSpace === "hex")
       navigator.clipboard.writeText(rgbToHex({ r, g, b }));
-    if (current_selection === "cmyk")
+    if (currentColorSpace === "cmyk")
       navigator.clipboard.writeText(rgbToCmyk({ r, g, b }));
 
     header.classList.add("active");

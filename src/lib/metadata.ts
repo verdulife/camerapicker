@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Camera Picker | Color picker",
-  description: "A color picker for your camera",
+  title: "HunterColor™ | The camera color picker",
+  description: "Hunt color codes from your camera and share them to the world",
   image: "card.jpg",
-  name: "Camera Picker",
+  name: "HunterColor™",
 }
