@@ -4,6 +4,10 @@
   --font-sans: "Inter", sans-serif;
 }
 
+* {
+  @apply select-none;
+}
+
 :root {
   @apply scroll-smooth;
 }
