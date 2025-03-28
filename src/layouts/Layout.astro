@@ -1,6 +1,7 @@
 ---
 import "@/styles/global.css";
 import { metadata } from "@/lib/metadata";
+import Footer from "@/components/Footer.astro";
 
 const { title, description, image, name } = metadata;
 const { site, url } = Astro;
@@ -48,8 +49,10 @@ const canonicalUrl = new URL(pathname, site).href;
     </script>
   </head>
   <body
-    class="flex h-svh flex-col overflow-clip bg-black text-neutral-100"
+    class="flex min-h-svh flex-col overflow-x-clip bg-black text-neutral-100"
   >
     <slot />
+
+    <Footer />
   </body>
 </html>

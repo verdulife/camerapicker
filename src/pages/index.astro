@@ -1,21 +1,22 @@
 ---
+import Corner from "@/assets/Corner.astro";
 import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
-  <section class="relative size-full">
+  <section class="bg-violet relative h-svh w-full overflow-clip rounded-3xl">
     <header
       class="absolute top-0 left-0 z-20 flex w-full -translate-y-full justify-center p-4 transition-transform"
     >
       <p
-        class="bg-magenta/80 rounded-full border border-neutral-900/20 px-4 py-2 text-center font-medium text-neutral-900 backdrop-blur"
+        class="rounded-full border border-neutral-50/10 bg-neutral-950 px-6 py-3 text-center text-sm font-medium backdrop-blur"
       >
-        Color copiado en el 📋
+        ✅ Color copiado
       </p>
     </header>
 
-    <nav>
-      <a href="/" class="absolute top-0 left-0 z-20 p-4">
+    <nav class="absolute top-0 left-0 z-20 flex rounded-br-3xl bg-black">
+      <a href="/" class="relative size-full p-4 text-black">
         <img src="/logo.svg" alt="Logo" class="hidden h-10 lg:block" />
 
         <img
@@ -23,6 +24,9 @@ import Layout from "@/layouts/Layout.astro";
           alt="Logo"
           class="h-10 origin-top-left translate-x-10 rotate-90 lg:hidden"
         />
+
+        <Corner class="absolute top-0 left-full size-6" />
+        <Corner class="absolute top-full left-0 size-6" />
       </a>
     </nav>
 
@@ -35,31 +39,6 @@ import Layout from "@/layouts/Layout.astro";
     </video>
 
     <canvas class="pointer-events-none absolute inset-0"></canvas>
-
-    <footer
-      class="bg-violet/70 absolute right-0 bottom-6 left-0 mx-auto flex max-w-xs items-stretch gap-4 overflow-clip rounded-full border border-neutral-50/20 p-2 shadow backdrop-blur"
-    >
-      <button
-        class="w-22 shrink-0 cursor-pointer rounded-full border-2 border-white shadow"
-      >
-      </button>
-
-      <aside class="flex flex-col justify-between">
-        <select class="size-full appearance-none py-4 font-medium outline-none">
-          <optgroup label="RGB" class="bg-violet text-white">
-            <option value="rgb">rgb(0, 0, 0)</option>
-          </optgroup>
-
-          <optgroup label="Hexadecimal" class="bg-violet text-white">
-            <option value="hex">#000000</option>
-          </optgroup>
-
-          <optgroup label="CMYK" class="bg-violet text-white">
-            <option value="cmyk">0C 0M 0Y 0K</option>
-          </optgroup>
-        </select>
-      </aside>
-    </footer>
   </section>
 </Layout>
 
@@ -76,8 +55,10 @@ import Layout from "@/layouts/Layout.astro";
 
   const video = document.querySelector("video") as HTMLVideoElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
-  const button = document.querySelector("button") as HTMLButtonElement;
-  const select = document.querySelector("select") as HTMLSelectElement;
+  const button = document.querySelector("#color_output") as HTMLButtonElement;
+  const select = document.querySelector(
+    "#colorspace_selector"
+  ) as HTMLSelectElement;
   const rgbOut = document.querySelector("[value='rgb']") as HTMLOptionElement;
   const hexOut = document.querySelector("[value='hex']") as HTMLOptionElement;
   const cmykOut = document.querySelector("[value='cmyk']") as HTMLOptionElement;
@@ -111,9 +92,16 @@ import Layout from "@/layouts/Layout.astro";
 
   video.srcObject = stream;
 
-  video.addEventListener("loadedmetadata", () => {
+  video.addEventListener("play", () => {
+    if (!ctx) return;
+
+    const { videoWidth, videoHeight } = video;
+    const scaleX = innerWidth / videoWidth;
+    const scaleY = innerHeight / videoHeight;
     canvas.width = innerWidth;
     canvas.height = innerHeight;
+
+    ctx.scale(scaleX, scaleY);
 
     selection.x = targetSelection.x =
       innerWidth / 2 - (selection.size * selection.zoom) / 2;
