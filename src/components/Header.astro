@@ -1,0 +1,20 @@
+---
+import Corner from "@/assets/Corner.astro";
+---
+
+<header>
+  <nav class="absolute top-0 left-0 z-20 flex rounded-br-3xl bg-black">
+    <a href="/" class="relative size-full p-4 text-black">
+      <img src="/logo.svg" alt="Logo" class="hidden h-10 lg:block" />
+
+      <img
+        src="/imago.svg"
+        alt="Logo"
+        class="h-10 origin-top-left translate-x-10 rotate-90 lg:hidden"
+      />
+
+      <Corner class="absolute top-0 left-full size-6" />
+      <Corner class="absolute top-full left-0 size-6" />
+    </a>
+  </nav>
+</header>

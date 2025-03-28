@@ -4,50 +4,56 @@ import Corner from "@/assets/Corner.astro";
 import Hunter from "@/assets/Hunter.astro";
 import Users from "@/assets/Users.astro";
 import Dots from "@/assets/Dots.astro";
+
+const { pathname } = Astro.url;
+const isHome = pathname === "/";
 ---
 
-<footer class="fixed bottom-0 flex w-full items-end justify-between pointer-events-none">
-  <aside class="relative mb-6 ml-6 flex items-center gap-4">
-    <button
-      id="color_output"
-      class="size-20 shrink-0 cursor-pointer rounded-full border-2 border-white shadow pointer-events-auto"
-    >
-    </button>
+<footer
+  class="pointer-events-none fixed bottom-0 flex w-full items-end justify-between"
+>
+  {
+    isHome && (
+      <aside class="relative mb-6 ml-6 flex items-center gap-4">
+        <button
+          id="color_output"
+          class="pointer-events-auto size-20 shrink-0 cursor-pointer rounded-full border-2 border-white shadow"
+        />
 
-    <select
-      id="colorspace_selector"
-      class="size-full appearance-none rounded-full border border-neutral-50/10 bg-black py-2 pr-8 pl-4 text-sm font-medium outline-none pointer-events-auto"
-    >
-      <optgroup label="RGB" class="bg-black text-neutral-50">
-        <option value="rgb">rgb(0, 0, 0)</option>
-      </optgroup>
+        <select
+          id="colorspace_selector"
+          class="pointer-events-auto size-full appearance-none rounded-full border border-neutral-50/10 bg-black py-2 pr-8 pl-4 text-sm font-medium outline-none"
+        >
+          <optgroup label="RGB" class="bg-black text-neutral-50">
+            <option value="rgb">rgb(0, 0, 0)</option>
+          </optgroup>
 
-      <optgroup label="Hexadecimal" class="bg-black text-neutral-50">
-        <option value="hex">#000000</option>
-      </optgroup>
+          <optgroup label="Hexadecimal" class="bg-black text-neutral-50">
+            <option value="hex">#000000</option>
+          </optgroup>
 
-      <optgroup label="CMYK" class="bg-black text-neutral-50">
-        <option value="cmyk">0C 0M 0Y 0K</option>
-      </optgroup>
-    </select>
+          <optgroup label="CMYK" class="bg-black text-neutral-50">
+            <option value="cmyk">0C 0M 0Y 0K</option>
+          </optgroup>
+        </select>
 
-    <Dots
-      class="pointer-events-none absolute right-4 size-4 text-neutral-400"
-    />
-  </aside>
+        <Dots class="pointer-events-none absolute right-4 size-4 text-neutral-400" />
+      </aside>
+    )
+  }
 
   <nav
-    class="relative flex flex-col rounded-tl-3xl border border-neutral-50/10 bg-black py-4 text-neutral-400 pointer-events-auto"
+    class="pointer-events-auto relative ml-auto flex flex-col rounded-tl-3xl bg-black py-4 text-neutral-400"
   >
-    <a href="/user" class="p-4">
+    <a href="/colors" class="p-4">
       <Colors class="size-6" />
     </a>
 
-    <a href="/hunter" class="p-4">
+    <a href="/" class="p-4">
       <Hunter class="size-6" />
     </a>
 
-    <a href="/about" class="p-4">
+    <a href="/online" class="p-4">
       <Users class="size-6" />
     </a>
 
