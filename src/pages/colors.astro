@@ -1,0 +1,23 @@
+---
+import ColorCard from "@/components/ColorCard.astro";
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout>
+  <main
+    class="bg-violet flex flex-1 flex-col items-center justify-center gap-4 px-4 py-36 text-center"
+  >
+    <section class="grid w-full grid-cols-2 gap-2">
+      <ColorCard id="hc-1" name="Color 1" rgb={{ r: 255, g: 0, b: 0 }} />
+      <ColorCard id="hc-2" name="Color 2" rgb={{ r: 0, g: 255, b: 0 }} />
+      <ColorCard id="hc-3" name="Color 3" rgb={{ r: 0, g: 0, b: 255 }} />
+      <ColorCard id="hc-4" name="Color 4" rgb={{ r: 255, g: 255, b: 0 }} />
+      <ColorCard id="hc-5" name="Color 5" rgb={{ r: 0, g: 255, b: 255 }} />
+      <ColorCard id="hc-6" name="Color 6" rgb={{ r: 255, g: 0, b: 255 }} />
+      <ColorCard id="hc-7" name="Color 7" rgb={{ r: 255, g: 255, b: 255 }} />
+      <ColorCard id="hc-8" name="Color 8" rgb={{ r: 0, g: 0, b: 0 }} />
+      <ColorCard id="hc-9" name="Color 9" rgb={{ r: 0, g: 0, b: 0 }} />
+      <ColorCard id="hc-10" name="Color 10" rgb={{ r: 0, g: 0, b: 0 }} />
+    </section>
+  </main>
+</Layout>

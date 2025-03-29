@@ -1,11 +1,13 @@
 ---
+import Dots from "@/assets/Dots.astro";
 import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
   <section class="bg-violet relative h-svh w-full overflow-clip rounded-3xl">
     <header
-      class="absolute top-0 left-0 z-20 flex w-full -translate-y-full justify-center p-4 transition-transform"
+      id="toast"
+      class="fixed top-0 right-0 z-20 flex -translate-y-full p-4 transition-transform"
     >
       <p
         class="rounded-full border border-neutral-50/10 bg-neutral-950 px-6 py-3 text-center text-sm font-medium backdrop-blur"
@@ -23,40 +25,106 @@ import Layout from "@/layouts/Layout.astro";
     </video>
 
     <canvas class="pointer-events-none absolute inset-0"></canvas>
+
+    <dialog
+      id="colorDialog"
+      closedby="any"
+      class="bottom-0 z-30 w-full rounded-tl-3xl rounded-tr-3xl bg-white p-5 shadow"
+      
+    >
+      <div class="flex flex-col gap-2">
+        <figure
+          id="colorPreview"
+          class="aspect-[21/9] w-full rounded-2xl border border-neutral-800/10"
+        >
+        </figure>
+
+        <h1 id="colorName" class="mt-2 text-lg font-bold text-black"></h1>
+
+        <ul class="flex flex-col">
+          <li class="flex flex-col border-b border-neutral-900/10 py-2">
+            <p class="text-xs font-semibold text-neutral-600">RGB</p>
+
+            <button class="flex w-full items-center justify-between">
+              <p id="rgbOut">rgb(0, 0, 0)</p>
+              <Dots
+                class="pointer-events-none right-4 size-4 text-neutral-400"
+              />
+            </button>
+          </li>
+
+          <li class="flex flex-col border-b border-neutral-900/10 py-2">
+            <p class="text-xs font-semibold text-neutral-600">HEX</p>
+
+            <button class="flex w-full items-center justify-between">
+              <p id="hexOut">#000000</p>
+              <Dots
+                class="pointer-events-none right-4 size-4 text-neutral-400"
+              />
+            </button>
+          </li>
+
+          <li class="flex flex-col py-2">
+            <p class="text-xs font-semibold text-neutral-600">CMYK</p>
+
+            <button class="flex w-full items-center justify-between">
+              <p id="cmykOut">0C 0M 0Y 0K</p>
+              <Dots
+                class="pointer-events-none right-4 size-4 text-neutral-400"
+              />
+            </button>
+          </li>
+        </ul>
+      </div>
+    </dialog>
   </section>
 </Layout>
 
-<style>
-  header.active {
-    translate: 0;
+<style is:inline>
+  #colorDialog[open] {
+    tranlate: 0 0;
+    transition: translate 150ms ease;
+
+    @starting-style {
+      translate: 0 100%;
+    }
+  }
+
+  #colorDialog {
+    transition: all 150ms ease allow-discrete;
+  }
+
+  #toast.active {
+    translate: 0 !important;
   }
 </style>
 
 <script>
-  import type { ColorSpace } from "@/lib/types";
-  import { rgbToHex, rgbToCmyk } from "@/lib/colors";
-  import { isTouchDevice, saveColorSpace, loadColorSpace } from "@/lib/utils";
+  import { rgbToHex, rgbToCmyk, getColorName } from "@/lib/colors";
+  import { isTouchDevice } from "@/lib/utils";
 
   const video = document.querySelector("video") as HTMLVideoElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
-  const button = document.querySelector("#color_output") as HTMLButtonElement;
-  const select = document.querySelector(
-    "#colorspace_selector"
-  ) as HTMLSelectElement;
-  const rgbOut = document.querySelector("[value='rgb']") as HTMLOptionElement;
-  const hexOut = document.querySelector("[value='hex']") as HTMLOptionElement;
-  const cmykOut = document.querySelector("[value='cmyk']") as HTMLOptionElement;
-  const header = document.querySelector("header") as HTMLElement;
+  const hunterButton = document.querySelector(
+    "#color_output"
+  ) as HTMLButtonElement;
+  const colorDialog = document.querySelector(
+    "#colorDialog"
+  ) as HTMLDialogElement;
+  const colorPreview = document.querySelector("#colorPreview") as HTMLElement;
+  const rgbOut = document.querySelector("#rgbOut") as HTMLParagraphElement;
+  const hexOut = document.querySelector("#hexOut") as HTMLParagraphElement;
+  const cmykOut = document.querySelector("#cmykOut") as HTMLParagraphElement;
+  const toast = document.querySelector("#toast") as HTMLElement;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   const zoomCanvas = document.createElement("canvas");
   const zoomCtx = zoomCanvas.getContext("2d");
   const { innerWidth, innerHeight } = window;
+  const colorName = document.querySelector("#colorName") as HTMLElement;
 
   let selection = { x: 0, y: 0, size: 65, zoom: 1.25 };
   let targetSelection = { x: 0, y: 0 };
   let rgb_values = { r: 0, g: 0, b: 0 };
-  let currentColorSpace: ColorSpace = loadColorSpace();
-  select.value = currentColorSpace;
 
   const videoOpts = isTouchDevice
     ? {
@@ -233,10 +301,12 @@ import Layout from "@/layouts/Layout.astro";
   function printResult() {
     const { r, g, b } = rgb_values;
 
-    button.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-    rgbOut.innerHTML = `rgb(${r}, ${g}, ${b})`;
-    hexOut.innerHTML = rgbToHex({ r, g, b });
-    cmykOut.innerHTML = rgbToCmyk({ r, g, b });
+    hunterButton.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    rgbOut.textContent = `rgb(${r}, ${g}, ${b})`;
+    hexOut.textContent = rgbToHex({ r, g, b });
+    cmykOut.textContent = rgbToCmyk({ r, g, b });
+    colorName.textContent = getColorName({ r, g, b });
   }
 
   function animateSelection() {
@@ -259,25 +329,7 @@ import Layout from "@/layouts/Layout.astro";
   video.addEventListener("click", updateSelection);
   video.addEventListener("touchstart", updateSelection);
 
-  select.addEventListener("change", (event: any) => {
-    currentColorSpace = event.target.value;
-    saveColorSpace(currentColorSpace);
-  });
-
-  button.addEventListener("click", () => {
-    const { r, g, b } = rgb_values;
-
-    if (currentColorSpace === "rgb")
-      navigator.clipboard.writeText(`rgb(${r}, ${g}, ${b})`);
-    if (currentColorSpace === "hex")
-      navigator.clipboard.writeText(rgbToHex({ r, g, b }));
-    if (currentColorSpace === "cmyk")
-      navigator.clipboard.writeText(rgbToCmyk({ r, g, b }));
-
-    header.classList.add("active");
-
-    setTimeout(() => {
-      header.classList.remove("active");
-    }, 2000);
+  hunterButton.addEventListener("click", () => {
+    colorDialog.open = true;
   });
 </script>
