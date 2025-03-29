@@ -1,6 +1,6 @@
 ---
-import Dots from "@/assets/Dots.astro";
 import Layout from "@/layouts/Layout.astro";
+import ColorDialog from "@/components/ColorDialog.astro";
 ---
 
 <Layout>
@@ -26,76 +26,17 @@ import Layout from "@/layouts/Layout.astro";
 
     <canvas class="pointer-events-none absolute inset-0"></canvas>
 
-    <dialog
-      id="colorDialog"
-      closedby="any"
-      class="bottom-0 z-30 w-full rounded-tl-3xl rounded-tr-3xl bg-white p-5 shadow"
-      
-    >
-      <div class="flex flex-col gap-2">
-        <figure
-          id="colorPreview"
-          class="aspect-[21/9] w-full rounded-2xl border border-neutral-800/10"
-        >
-        </figure>
-
-        <h1 id="colorName" class="mt-2 text-lg font-bold text-black"></h1>
-
-        <ul class="flex flex-col">
-          <li class="flex flex-col border-b border-neutral-900/10 py-2">
-            <p class="text-xs font-semibold text-neutral-600">RGB</p>
-
-            <button class="flex w-full items-center justify-between">
-              <p id="rgbOut">rgb(0, 0, 0)</p>
-              <Dots
-                class="pointer-events-none right-4 size-4 text-neutral-400"
-              />
-            </button>
-          </li>
-
-          <li class="flex flex-col border-b border-neutral-900/10 py-2">
-            <p class="text-xs font-semibold text-neutral-600">HEX</p>
-
-            <button class="flex w-full items-center justify-between">
-              <p id="hexOut">#000000</p>
-              <Dots
-                class="pointer-events-none right-4 size-4 text-neutral-400"
-              />
-            </button>
-          </li>
-
-          <li class="flex flex-col py-2">
-            <p class="text-xs font-semibold text-neutral-600">CMYK</p>
-
-            <button class="flex w-full items-center justify-between">
-              <p id="cmykOut">0C 0M 0Y 0K</p>
-              <Dots
-                class="pointer-events-none right-4 size-4 text-neutral-400"
-              />
-            </button>
-          </li>
-        </ul>
-      </div>
-    </dialog>
+    <ColorDialog />
   </section>
 </Layout>
 
 <style is:inline>
-  #colorDialog[open] {
-    tranlate: 0 0;
-    transition: translate 150ms ease;
-
-    @starting-style {
-      translate: 0 100%;
-    }
-  }
-
-  #colorDialog {
-    transition: all 150ms ease allow-discrete;
+  #colorDialog.active {
+    translate: 0;
   }
 
   #toast.active {
-    translate: 0 !important;
+    translate: 0;
   }
 </style>
 
@@ -105,17 +46,19 @@ import Layout from "@/layouts/Layout.astro";
 
   const video = document.querySelector("video") as HTMLVideoElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
-  const hunterButton = document.querySelector(
-    "#color_output"
-  ) as HTMLButtonElement;
-  const colorDialog = document.querySelector(
-    "#colorDialog"
-  ) as HTMLDialogElement;
+
+  const hunterButton = document.querySelector("#color_output") as HTMLElement;
   const colorPreview = document.querySelector("#colorPreview") as HTMLElement;
-  const rgbOut = document.querySelector("#rgbOut") as HTMLParagraphElement;
-  const hexOut = document.querySelector("#hexOut") as HTMLParagraphElement;
-  const cmykOut = document.querySelector("#cmykOut") as HTMLParagraphElement;
-  const toast = document.querySelector("#toast") as HTMLElement;
+
+  const rgbOutButton = document.querySelector("#rgbOut") as HTMLElement;
+  const rgbOut = document.querySelector("#rgbOut>p") as HTMLElement;
+
+  const hexOutButton = document.querySelector("#hexOut") as HTMLElement;
+  const hexOut = document.querySelector("#hexOut>p") as HTMLElement;
+
+  const cmykOutButton = document.querySelector("#cmykOut") as HTMLElement;
+  const cmykOut = document.querySelector("#cmykOut>p") as HTMLElement;
+
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   const zoomCanvas = document.createElement("canvas");
   const zoomCtx = zoomCanvas.getContext("2d");
@@ -299,14 +242,21 @@ import Layout from "@/layouts/Layout.astro";
   }
 
   function printResult() {
+    const huderButtonState = hunterButton.dataset.running;
+    if (huderButtonState === "false") return;
+
     const { r, g, b } = rgb_values;
 
     hunterButton.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
     colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-    rgbOut.textContent = `rgb(${r}, ${g}, ${b})`;
-    hexOut.textContent = rgbToHex({ r, g, b });
-    cmykOut.textContent = rgbToCmyk({ r, g, b });
     colorName.textContent = getColorName({ r, g, b });
+
+    rgbOutButton.dataset.color = JSON.stringify({ r, g, b });
+    rgbOut.textContent = `rgb(${r}, ${g}, ${b})`;
+    hexOutButton.dataset.color = rgbToHex({ r, g, b });
+    hexOut.textContent = rgbToHex({ r, g, b });
+    cmykOutButton.dataset.color = rgbToCmyk({ r, g, b });
+    cmykOut.textContent = rgbToCmyk({ r, g, b });
   }
 
   function animateSelection() {
@@ -327,9 +277,4 @@ import Layout from "@/layouts/Layout.astro";
   }
 
   video.addEventListener("click", updateSelection);
-  video.addEventListener("touchstart", updateSelection);
-
-  hunterButton.addEventListener("click", () => {
-    colorDialog.open = true;
-  });
 </script>

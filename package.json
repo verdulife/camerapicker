@@ -11,6 +11,8 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.15",
     "astro": "^5.5.4",
+    "color-2-name": "^1.4.4",
+    "nanoid": "^5.1.5",
     "tailwindcss": "^4.0.15"
   },
   "devDependencies": {

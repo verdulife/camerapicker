@@ -49,10 +49,16 @@ const cmykOut = rgbToCmyk(rgb);
 </article>
 
 <script type="module" define:vars={{ id }} is:inline>
-  import { loadColorSpace } from "./src/lib/utils";
+  import { loadColorSpace, saveColorSpace } from "./src/lib/utils";
 
   const card = document.querySelector(`#${id}`);
   const select = card.querySelector("select");
 
   select.value = loadColorSpace();
+
+  select.addEventListener("change", () => {
+    console.log(select.value);
+
+    saveColorSpace(select.value);
+  });
 </script>

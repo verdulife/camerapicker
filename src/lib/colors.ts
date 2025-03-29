@@ -1,4 +1,6 @@
 import type { RGB } from "@/lib/types";
+import { closest } from "color-2-name";
+
 
 function fitOnRange({ r, g, b }: RGB) {
   const fit_r = Math.max(0, Math.min(255, r));
@@ -41,40 +43,5 @@ export function rgbToCmyk({ r, g, b }: RGB): string {
 }
 
 export function getColorName({ r, g, b }: RGB): string {
-  const colors = [
-    { name: "Negro", rgb: { r: 0, g: 0, b: 0 } },
-    { name: "Blanco", rgb: { r: 255, g: 255, b: 255 } },
-    { name: "Rojo", rgb: { r: 255, g: 0, b: 0 } },
-    { name: "Verde", rgb: { r: 0, g: 255, b: 0 } },
-    { name: "Azul", rgb: { r: 0, g: 0, b: 255 } },
-    { name: "Amarillo", rgb: { r: 255, g: 255, b: 0 } },
-    { name: "Cian", rgb: { r: 0, g: 255, b: 255 } },
-    { name: "Magenta", rgb: { r: 255, g: 0, b: 255 } },
-    { name: "Gris", rgb: { r: 128, g: 128, b: 128 } },
-    { name: "Naranja", rgb: { r: 255, g: 165, b: 0 } },
-    { name: "Rosa", rgb: { r: 255, g: 192, b: 203 } }
-  ];
-
-  const closest = colors.reduce((prev, curr) => {
-    const prevDiff = colorDistance({ r, g, b }, prev.rgb);
-    const currDiff = colorDistance({ r, g, b }, curr.rgb);
-    return currDiff < prevDiff ? curr : prev;
-  });
-
-  const brightness = getBrightness({ r, g, b });
-  if (brightness < 85) return `${closest.name} oscuro`;
-  if (brightness > 170) return `${closest.name} claro`;
-  return closest.name;
-}
-
-function colorDistance({ r, g, b }: RGB, color: RGB) {
-  return Math.sqrt(
-    Math.pow(r - color.r, 2) +
-    Math.pow(g - color.g, 2) +
-    Math.pow(b - color.b, 2)
-  );
-}
-
-function getBrightness({ r, g, b }: RGB) {
-  return (r * 0.299 + g * 0.587 + b * 0.114);
+  return closest(`rgb(${r}, ${g}, ${b})`).name;
 }

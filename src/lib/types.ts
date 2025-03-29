@@ -5,3 +5,9 @@ export interface RGB {
 }
 
 export type ColorSpace = "rgb" | "hex" | "cmyk";
+
+export interface UserColor {
+  id: string;
+  name: string;
+  rgb: RGB;
+}
