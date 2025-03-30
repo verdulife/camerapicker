@@ -43,6 +43,7 @@ import ColorDialog from "@/components/ColorDialog.astro";
 <script>
   import { rgbToHex, rgbToCmyk, getColorName } from "@/lib/colors";
   import { isTouchDevice } from "@/lib/utils";
+  import ColorThief from "colorthief";
 
   const video = document.querySelector("video") as HTMLVideoElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
@@ -212,31 +213,16 @@ import ColorDialog from "@/components/ColorDialog.astro";
   function analyzeColor() {
     if (!ctx) return;
 
-    const imageData = ctx.getImageData(
-      selection.x,
-      selection.y,
-      selection.size,
-      selection.size
-    );
+    ctx.getImageData(selection.x, selection.y, selection.size, selection.size);
 
-    const pixels = imageData.data;
-    const totalPixels = selection.size * selection.size;
+    const img = new Image();
+    img.src = canvas.toDataURL();
+    img.onload = () => {
+      const colorThief = new ColorThief();
+      const [r, g, b] = colorThief.getColor(img);
+      rgb_values = { r, g, b };
+    };
 
-    let r = 0,
-      g = 0,
-      b = 0;
-
-    for (let i = 0; i < pixels.length; i += 4) {
-      r += pixels[i];
-      g += pixels[i + 1];
-      b += pixels[i + 2];
-    }
-
-    r = Math.floor(r / totalPixels);
-    g = Math.floor(g / totalPixels);
-    b = Math.floor(b / totalPixels);
-
-    rgb_values = { r, g, b };
     printResult();
     requestAnimationFrame(analyzeColor);
   }
