@@ -20,7 +20,7 @@ export function rgbToHex({ r, g, b }: RGB): string {
     to: "hex",
   });
 
-  return color;
+  return `#${color.toLowerCase()}`;
 }
 
 export function rgbToCmyk({ r, g, b }: RGB): string {
@@ -56,7 +56,7 @@ export function rgbToHsl({ r, g, b }: RGB): string {
     to: "hsl",
   });
 
-  return `hsl(${hsl.h} ${hsl.s}% ${hsl.l})%`;
+  return `hsl(${hsl.h} ${hsl.s}% ${hsl.l}%)`;
 }
 
 export function rgbToLab({ r, g, b }: RGB): string {
@@ -65,5 +65,5 @@ export function rgbToLab({ r, g, b }: RGB): string {
     to: "lab",
   });
 
-  return `lab(${lab.l}% ${lab.a} ${lab.b})`;
+  return `lab(${lab.l.toFixed(2)}% ${lab.a.toFixed(2)} ${lab.b.toFixed(2)})`;
 }

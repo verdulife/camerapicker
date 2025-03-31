@@ -1,7 +1,5 @@
 import type { UserColor } from "@/lib/types";
-import { toast_messages } from "./consts";
-
-export const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+import { toast_messages } from "@/lib/consts";
 
 export function saveColor(color: UserColor) {
   const colors = loadColors();

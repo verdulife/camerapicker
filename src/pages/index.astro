@@ -14,7 +14,6 @@ import ColorDialog from "@/components/ColorDialog.astro";
     </video>
 
     <canvas class="pointer-events-none absolute inset-0"></canvas>
-
     <ColorDialog />
   </section>
 </Layout>
@@ -26,17 +25,8 @@ import ColorDialog from "@/components/ColorDialog.astro";
 </style>
 
 <script>
-  import {
-    rgbToHex,
-    rgbToCmyk,
-    rgbToName,
-    rgbToPantone,
-    rgbToRal,
-    rgbToHsl,
-    rgbToLab,
-    rgbToRgb,
-  } from "@/lib/colors";
-  import { isTouchDevice } from "@/lib/utils";
+  import { rgbToRgb } from "@/lib/colors";
+  import { isTouchDevice } from "@/lib/consts";
   import ColorThief from "colorthief";
 
   const video = document.querySelector("video") as HTMLVideoElement;
@@ -216,14 +206,10 @@ import ColorDialog from "@/components/ColorDialog.astro";
   }
 
   function printResult() {
-    const huderButtonState = hunterButton.dataset.running;
     const rgb = rgbToRgb(rgb_values);
 
-    if (huderButtonState === "false") {
-      colorDialog.dataset.color = JSON.stringify(rgb_values);
-    } else {
-      hunterButton.style.backgroundColor = rgb;
-    }
+    colorDialog.dataset.color = JSON.stringify(rgb_values);
+    hunterButton.style.backgroundColor = rgb;
   }
 
   function animateSelection() {
