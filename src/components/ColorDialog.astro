@@ -1,6 +1,7 @@
 ---
 import Colors from "@/assets/Colors.astro";
 import Dots from "@/assets/Dots.astro";
+import Share from "@/assets/Share.astro";
 ---
 
 <div id="outer-dialog" class="fixed inset-0 z-20 hidden"></div>
@@ -45,13 +46,19 @@ import Dots from "@/assets/Dots.astro";
     </li>
   </ul>
 
-  <button
-    id="save_color"
-    class="mt-4 flex items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
-  >
-    <Colors class="size-5" />
-    <p class="text-sm">Guardar color</p>
-  </button>
+  <div class="mt-4 flex w-full items-center gap-2">
+    <button
+      id="save_color"
+      class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
+    >
+      <Colors class="size-5" />
+      <p class="text-sm">Guardar color</p>
+    </button>
+
+    <button id="share" class="rounded-full border border-neutral-900/20 p-3">
+      <Share class="size-5" />
+    </button>
+  </div>
 </div>
 
 <script>
@@ -67,6 +74,7 @@ import Dots from "@/assets/Dots.astro";
   const cmykOutButton = document.querySelector("#cmykOut") as HTMLElement;
   const colorName = document.querySelector("#colorName") as HTMLElement;
   const saveColorButton = document.querySelector("#save_color") as HTMLElement;
+  const shareButton = document.querySelector("#share") as HTMLElement;
 
   hunterButton.addEventListener("click", () => {
     hunterButton.dataset.running = "false";
@@ -125,5 +133,13 @@ import Dots from "@/assets/Dots.astro";
     };
 
     saveColor(color);
+  });
+
+  shareButton.addEventListener("click", () => {
+    const shareData = {
+      url: window.location.href,
+    };
+
+    navigator.share(shareData);
   });
 </script>
