@@ -1,5 +1,6 @@
 import type { RGB } from "@/lib/types";
 import { closest } from "color-2-name";
+import { getClosestColor } from "nearest-pantone";
 
 
 function fitOnRange({ r, g, b }: RGB) {
@@ -44,4 +45,9 @@ export function rgbToCmyk({ r, g, b }: RGB): string {
 
 export function getColorName({ r, g, b }: RGB): string {
   return closest(`rgb(${r}, ${g}, ${b})`).name;
+}
+
+export function rgbToPantone({ r, g, b }: RGB) {
+  const hex = rgbToHex({ r, g, b });
+  return getClosestColor(hex);
 }
