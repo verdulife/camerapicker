@@ -6,6 +6,7 @@ import Share from "@/assets/Share.astro";
 
 <div id="outer-dialog" class="fixed inset-0 z-20 hidden"></div>
 <div
+  data-color='{"r":0,"g":0,"b":0}'
   id="colorDialog"
   class="fixed bottom-0 z-30 flex w-full translate-y-full flex-col gap-2 rounded-tl-3xl rounded-tr-3xl bg-white p-5 text-neutral-900 shadow transition-transform duration-300"
 >
@@ -65,19 +66,42 @@ import Share from "@/assets/Share.astro";
   import { saveColor, toaster } from "@/lib/utils";
   import { toast_messages } from "@/lib/consts";
   import { nanoid } from "nanoid";
+  import { rgbToCmyk, rgbToHex, rgbToName, rgbToRgb } from "@/lib/colors";
 
   const hunterButton = document.querySelector("#color_output") as HTMLElement;
   const outerDialog = document.querySelector("#outer-dialog") as HTMLElement;
   const colorDialog = document.querySelector("#colorDialog") as HTMLElement;
-  const rgbOutButton = document.querySelector("#rgbOut") as HTMLElement;
-  const hexOutButton = document.querySelector("#hexOut") as HTMLElement;
-  const cmykOutButton = document.querySelector("#cmykOut") as HTMLElement;
+
+  const colorPreview = document.querySelector("#colorPreview") as HTMLElement;
   const colorName = document.querySelector("#colorName") as HTMLElement;
+
+  const rgbOutButton = document.querySelector("#rgbOut") as HTMLElement;
+  const rgbOut = rgbOutButton.querySelector("p") as HTMLElement;
+  const hexOutButton = document.querySelector("#hexOut") as HTMLElement;
+  const hexOut = hexOutButton.querySelector("p") as HTMLElement;
+  const cmykOutButton = document.querySelector("#cmykOut") as HTMLElement;
+  const cmykOut = cmykOutButton.querySelector("p") as HTMLElement;
+
   const saveColorButton = document.querySelector("#save_color") as HTMLElement;
   const shareButton = document.querySelector("#share") as HTMLElement;
 
+  let rgb_values = { r: 0, g: 0, b: 0 };
+
   hunterButton.addEventListener("click", () => {
     hunterButton.dataset.running = "false";
+
+    const color = colorDialog.dataset.color!;
+    console.log(color);
+
+    const { r, g, b } = JSON.parse(color);
+    rgb_values = { r, g, b };
+
+    colorPreview.style.backgroundColor = rgbToRgb(rgb_values);
+    colorName.textContent = rgbToName(rgb_values);
+    rgbOut.textContent = rgbToRgb(rgb_values);
+    hexOut.textContent = rgbToHex(rgb_values);
+    cmykOut.textContent = rgbToCmyk(rgb_values);
+
     colorDialog.classList.add("active");
     outerDialog.classList.remove("hidden");
   });
@@ -89,33 +113,25 @@ import Share from "@/assets/Share.astro";
   });
 
   rgbOutButton.addEventListener("click", () => {
-    const rawColor = rgbOutButton.dataset.color!;
-    const { r, g, b } = JSON.parse(rawColor);
-    const color = `rgb(${r}, ${g}, ${b})` || "rgb(0, 0, 0)";
-
     navigator.clipboard
-      .writeText(color)
+      .writeText(rgbToRgb(rgb_values))
       .then(() => toaster(toast_messages.copied));
   });
 
   hexOutButton.addEventListener("click", () => {
-    const color = hexOutButton.dataset.color || "#000000";
-
     navigator.clipboard
-      .writeText(color)
+      .writeText(rgbToHex(rgb_values))
       .then(() => toaster(toast_messages.copied));
   });
 
   cmykOutButton.addEventListener("click", () => {
-    const color = cmykOutButton.dataset.color || "0C 0M 0Y 0K";
-
     navigator.clipboard
-      .writeText(color)
+      .writeText(rgbToCmyk(rgb_values))
       .then(() => toaster(toast_messages.copied));
   });
 
   saveColorButton.addEventListener("click", () => {
-    if (!colorName.textContent || !rgbOutButton.dataset.color) return;
+    if (!colorName.textContent) return;
 
     const promp = prompt(
       "Escribe un nombre para tu color",
@@ -123,22 +139,17 @@ import Share from "@/assets/Share.astro";
     );
     if (!promp) return;
 
-    const rawColor = rgbOutButton.dataset.color!;
-    const rgb = JSON.parse(rawColor);
-
     const color = {
       id: nanoid(),
       name: promp,
-      rgb,
+      rgb: rgb_values,
     };
 
     saveColor(color);
   });
 
   shareButton.addEventListener("click", () => {
-    const rawColor = rgbOutButton.dataset.color!;
-    const { r, g, b } = JSON.parse(rawColor);
-
+    const { r, g, b } = rgb_values;
     const shareData = {
       url: `${window.location.href}colors/${r}-${g}-${b}`,
     };

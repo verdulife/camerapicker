@@ -29,28 +29,21 @@ import ColorDialog from "@/components/ColorDialog.astro";
   import {
     rgbToHex,
     rgbToCmyk,
-    getColorName,
+    rgbToName,
     rgbToPantone,
+    rgbToRal,
+    rgbToHsl,
+    rgbToLab,
+    rgbToRgb,
   } from "@/lib/colors";
   import { isTouchDevice } from "@/lib/utils";
-
   import ColorThief from "colorthief";
 
   const video = document.querySelector("video") as HTMLVideoElement;
   const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 
   const hunterButton = document.querySelector("#color_output") as HTMLElement;
-  const colorPreview = document.querySelector("#colorPreview") as HTMLElement;
-  const colorName = document.querySelector("#colorName") as HTMLElement;
-
-  const rgbOutButton = document.querySelector("#rgbOut") as HTMLElement;
-  const rgbOut = document.querySelector("#rgbOut>p") as HTMLElement;
-
-  const hexOutButton = document.querySelector("#hexOut") as HTMLElement;
-  const hexOut = document.querySelector("#hexOut>p") as HTMLElement;
-
-  const cmykOutButton = document.querySelector("#cmykOut") as HTMLElement;
-  const cmykOut = document.querySelector("#cmykOut>p") as HTMLElement;
+  const colorDialog = document.querySelector("#colorDialog") as HTMLElement;
 
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   const zoomCanvas = document.createElement("canvas");
@@ -201,18 +194,22 @@ import ColorDialog from "@/components/ColorDialog.astro";
     ctx.stroke();
   }
 
-  function analyzeColor() {
+  async function analyzeColor() {
     if (!ctx) return;
 
     ctx.getImageData(selection.x, selection.y, selection.size, selection.size);
 
     const img = new Image();
     img.src = canvas.toDataURL();
-    img.onload = () => {
-      const colorThief = new ColorThief();
-      const [r, g, b] = colorThief.getColor(img)!;
-      rgb_values = { r, g, b };
-    };
+
+    await new Promise((resolve) => {
+      img.onload = () => {
+        const colorThief = new ColorThief();
+        const [r, g, b] = colorThief.getColor(img)!;
+        rgb_values = { r, g, b };
+        resolve(rgb_values);
+      };
+    });
 
     printResult();
     requestAnimationFrame(analyzeColor);
@@ -220,23 +217,13 @@ import ColorDialog from "@/components/ColorDialog.astro";
 
   function printResult() {
     const huderButtonState = hunterButton.dataset.running;
-    if (huderButtonState === "false") return;
+    const rgb = rgbToRgb(rgb_values);
 
-    const { r, g, b } = rgb_values;
-
-    hunterButton.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-    colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-    colorName.textContent = getColorName({ r, g, b });
-
-    rgbOutButton.dataset.color = JSON.stringify({ r, g, b });
-    rgbOut.textContent = `rgb(${r}, ${g}, ${b})`;
-    hexOutButton.dataset.color = rgbToHex({ r, g, b });
-    hexOut.textContent = rgbToHex({ r, g, b });
-    cmykOutButton.dataset.color = rgbToCmyk({ r, g, b });
-    cmykOut.textContent = rgbToCmyk({ r, g, b });
-
-    const pantone = rgbToPantone({ r, g, b });
-    console.log(pantone);
+    if (huderButtonState === "false") {
+      colorDialog.dataset.color = JSON.stringify(rgb_values);
+    } else {
+      hunterButton.style.backgroundColor = rgb;
+    }
   }
 
   function animateSelection() {

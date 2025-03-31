@@ -16,7 +16,7 @@
     "color-2-name": "^1.4.4",
     "colorthief": "^2.6.0",
     "nanoid": "^5.1.5",
-    "nearest-pantone": "^1.0.1",
+    "simple-color-converter": "^2.1.13",
     "svelte": "^5.25.3",
     "tailwindcss": "^4.0.15",
     "typescript": "^5.8.2"

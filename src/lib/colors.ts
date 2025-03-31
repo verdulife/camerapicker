@@ -1,53 +1,69 @@
 import type { RGB } from "@/lib/types";
-import { closest } from "color-2-name";
-import { getClosestColor } from "nearest-pantone";
+import colorConverter from "simple-color-converter";
 
+export function rgbToName({ r, g, b }: RGB): string {
+  const { color } = new colorConverter({
+    rgb: { r, g, b },
+    to: "ral"
+  });
 
-function fitOnRange({ r, g, b }: RGB) {
-  const fit_r = Math.max(0, Math.min(255, r));
-  const fit_g = Math.max(0, Math.min(255, g));
-  const fit_b = Math.max(0, Math.min(255, b));
+  return color.name;
+}
 
-  return { fit_r, fit_g, fit_b };
-};
+export function rgbToRgb({ r, g, b }: RGB): string {
+  return `rgb(${r}, ${g}, ${b})`;
+}
 
 export function rgbToHex({ r, g, b }: RGB): string {
-  const { fit_r, fit_g, fit_b } = fitOnRange({ r, g, b });
-  const toHex = (value: number) => value.toString(16).padStart(2, "0");
+  const { color } = new colorConverter({
+    rgb: { r, g, b },
+    to: "hex",
+  });
 
-  const redHex = toHex(fit_r);
-  const greenHex = toHex(fit_g);
-  const blueHex = toHex(fit_b);
-
-  return `#${redHex}${greenHex}${blueHex}`;
+  return color;
 }
 
 export function rgbToCmyk({ r, g, b }: RGB): string {
-  const { fit_r, fit_g, fit_b } = fitOnRange({ r, g, b });
-  const toPercentage = (value: number) => value / 255;
+  const { color: cmyk } = new colorConverter({
+    rgb: { r, g, b },
+    to: "cmyk",
+  });
 
-  const per_r = toPercentage(fit_r);
-  const per_g = toPercentage(fit_g);
-  const per_b = toPercentage(fit_b);
-
-  const val_k = 1 - Math.max(per_r, per_g, per_b);
-  const val_c = val_k === 1 ? 0 : (1 - per_r - val_k) / (1 - val_k);
-  const val_m = val_k === 1 ? 0 : (1 - per_g - val_k) / (1 - val_k);
-  const val_y = val_k === 1 ? 0 : (1 - per_b - val_k) / (1 - val_k);
-
-  const c = Math.round(val_c * 100);
-  const m = Math.round(val_m * 100);
-  const y = Math.round(val_y * 100);
-  const k = Math.round(val_k * 100);
-
-  return `${c}C ${m}M ${y}Y ${k}K`;
+  return `${cmyk.c}M ${cmyk.m}Y ${cmyk.y}K ${cmyk.k}K`;
 }
 
-export function getColorName({ r, g, b }: RGB): string {
-  return closest(`rgb(${r}, ${g}, ${b})`).name;
+export function rgbToPantone({ r, g, b }: RGB): string {
+  const { color } = new colorConverter({
+    rgb: { r, g, b },
+    to: "pantone",
+  });
+
+  return color;
 }
 
-export function rgbToPantone({ r, g, b }: RGB) {
-  const hex = rgbToHex({ r, g, b });
-  return getClosestColor(hex);
+export function rgbToRal({ r, g, b }: RGB): string {
+  const { color: { ral } } = new colorConverter({
+    rgb: { r, g, b },
+    to: "ral",
+  });
+
+  return ral;
+}
+
+export function rgbToHsl({ r, g, b }: RGB): string {
+  const { color: hsl } = new colorConverter({
+    rgb: { r, g, b },
+    to: "hsl",
+  });
+
+  return `hsl(${hsl.h} ${hsl.s}% ${hsl.l})%`;
+}
+
+export function rgbToLab({ r, g, b }: RGB): string {
+  const { color: lab } = new colorConverter({
+    rgb: { r, g, b },
+    to: "lab",
+  });
+
+  return `lab(${lab.l}% ${lab.a} ${lab.b})`;
 }
