@@ -16,7 +16,9 @@
     <p class="text-neutral-50">No hay colores guardados</p>
   </section>
 {:else}
-  <section class="grid w-full grid-cols-2 gap-2">
+  <section
+    class="grid w-full max-w-6xl grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2"
+  >
     {#each colors as color}
       <ColorCard {color} />
     {/each}

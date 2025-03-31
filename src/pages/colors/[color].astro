@@ -23,98 +23,105 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
   customImage={image}
 >
   <main
-    class="flex max-h-svh flex-1 flex-col gap-2 bg-white text-neutral-900"
+    class="flex flex-1 flex-col items-center gap-2 bg-white text-neutral-900"
   >
-    <figure
-      data-color={color}
-      id="colorPreview"
-      class="aspect-[4/3] w-full border border-neutral-800/10"
-    >
-    </figure>
-
-    <h1 id="colorName" class="px-5 mt-2 text-lg font-bold capitalize"></h1>
-
-    <div class="px-5 flex w-full items-center gap-2">
-      <button
-        id="save_color"
-        class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
+    <div class="flex size-full max-h-svh max-w-sm flex-col gap-2">
+      <figure
+        data-color={color}
+        id="colorPreview"
+        class="aspect-[4/3] w-full border border-neutral-800/10"
       >
-        <Colors class="size-5" />
-        <p class="text-sm">Guardar color</p>
-      </button>
+      </figure>
 
-      <button id="share" class="rounded-full border border-neutral-900/20 p-3">
-        <Share class="size-5" />
-      </button>
-    </div>
+      <h1 id="colorName" class="mt-2 px-5 text-lg font-bold capitalize"></h1>
 
-    <ul class="mt-4 px-5 flex flex-col overflow-y-auto pb-32 border-t border-neutral-900/10">
-      <li class="flex flex-col border-b border-neutral-900/10 py-2">
-        <p class="text-xs font-semibold text-neutral-600">RGB</p>
-
-        <button id="rgbOut" class="flex w-full items-center justify-between">
-          <p>rgb(0, 0, 0)</p>
-          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+      <div class="flex w-full items-center gap-2 px-5">
+        <button
+          id="save_color"
+          class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
+        >
+          <Colors class="size-5" />
+          <p class="text-sm">Guardar color</p>
         </button>
-      </li>
-
-      <li class="flex flex-col border-b border-neutral-900/10 py-2">
-        <p class="text-xs font-semibold text-neutral-600">HEX</p>
-
-        <button id="hexOut" class="flex w-full items-center justify-between">
-          <p>#000000</p>
-          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
-        </button>
-      </li>
-
-      <li class="flex flex-col border-b border-neutral-900/10 py-2">
-        <p class="text-xs font-semibold text-neutral-600">CMYK</p>
-
-        <button id="cmykOut" class="flex w-full items-center justify-between">
-          <p>0C 0M 0Y 0K</p>
-          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
-        </button>
-      </li>
-
-      <li class="flex flex-col border-b border-neutral-900/10 py-2">
-        <p class="text-xs font-semibold text-neutral-600">Pantone</p>
 
         <button
-          id="pantoneOut"
-          class="flex w-full items-center justify-between"
+          id="share"
+          class="rounded-full border border-neutral-900/20 p-3"
         >
-          <p>Pantone 0</p>
-          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+          <Share class="size-5" />
         </button>
-      </li>
+      </div>
 
-      <li class="flex flex-col border-b border-neutral-900/10 py-2">
-        <p class="text-xs font-semibold text-neutral-600">RAL</p>
+      <ul
+        class="mt-4 flex flex-col overflow-y-auto border-t border-neutral-900/10 px-5 pb-32"
+      >
+        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+          <p class="text-xs font-semibold text-neutral-600">RGB</p>
 
-        <button id="ralOut" class="flex w-full items-center justify-between">
-          <p>RAL 0</p>
-          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
-        </button>
-      </li>
+          <button id="rgbOut" class="flex w-full items-center justify-between">
+            <p>rgb(0, 0, 0)</p>
+            <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+          </button>
+        </li>
 
-      <li class="flex flex-col border-b border-neutral-900/10 py-2">
-        <p class="text-xs font-semibold text-neutral-600">LAB</p>
+        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+          <p class="text-xs font-semibold text-neutral-600">HEX</p>
 
-        <button id="labOut" class="flex w-full items-center justify-between">
-          <p>lab(0% 0 0)</p>
-          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
-        </button>
-      </li>
+          <button id="hexOut" class="flex w-full items-center justify-between">
+            <p>#000000</p>
+            <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+          </button>
+        </li>
 
-      <li class="flex flex-col py-2">
-        <p class="text-xs font-semibold text-neutral-600">HSL</p>
+        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+          <p class="text-xs font-semibold text-neutral-600">CMYK</p>
 
-        <button id="hslOut" class="flex w-full items-center justify-between">
-          <p>hsl(0 0% 0%)</p>
-          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
-        </button>
-      </li>
-    </ul>
+          <button id="cmykOut" class="flex w-full items-center justify-between">
+            <p>0C 0M 0Y 0K</p>
+            <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+          </button>
+        </li>
+
+        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+          <p class="text-xs font-semibold text-neutral-600">Pantone</p>
+
+          <button
+            id="pantoneOut"
+            class="flex w-full items-center justify-between"
+          >
+            <p>Pantone 0</p>
+            <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+          </button>
+        </li>
+
+        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+          <p class="text-xs font-semibold text-neutral-600">RAL</p>
+
+          <button id="ralOut" class="flex w-full items-center justify-between">
+            <p>RAL 0</p>
+            <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+          </button>
+        </li>
+
+        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+          <p class="text-xs font-semibold text-neutral-600">LAB</p>
+
+          <button id="labOut" class="flex w-full items-center justify-between">
+            <p>lab(0% 0 0)</p>
+            <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+          </button>
+        </li>
+
+        <li class="flex flex-col py-2">
+          <p class="text-xs font-semibold text-neutral-600">HSL</p>
+
+          <button id="hslOut" class="flex w-full items-center justify-between">
+            <p>hsl(0 0% 0%)</p>
+            <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+          </button>
+        </li>
+      </ul>
+    </div>
   </main>
 </Layout>
 
