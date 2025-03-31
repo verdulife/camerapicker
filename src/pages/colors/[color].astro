@@ -13,7 +13,7 @@ if (!color) return Astro.redirect("/colors");
 
 const [r, g, b] = color.split("-").map(Number);
 const colorName = getColorName({ r, g, b });
-const description = `${colorName} - RGB: rgb(${r}, ${g}, ${b}), HEX: ${rgbToHex({ r, g, b })}, CMYK: ${rgbToCmyk({ r, g, b })}`;
+const description = `RGB: rgb(${r}, ${g}, ${b}), HEX: ${rgbToHex({ r, g, b })}, CMYK: ${rgbToCmyk({ r, g, b })}`;
 const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToHex({ r, g, b })}]`;
 ---
 
@@ -22,9 +22,7 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToHex({ r, g, b }
   customDescription={description}
   customImage={image}
 >
-  <main
-    class="flex flex-1 flex-col gap-2 rounded-3xl bg-white p-5 py-36 text-neutral-900"
-  >
+  <main class="flex flex-1 flex-col gap-2 bg-white p-5 py-24 text-neutral-900">
     <figure
       data-color={color}
       id="colorPreview"
@@ -34,7 +32,21 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToHex({ r, g, b }
 
     <h1 id="colorName" class="mt-2 text-lg font-bold capitalize"></h1>
 
-    <ul class="flex flex-col">
+    <div class="flex w-full items-center gap-2">
+      <button
+        id="save_color"
+        class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
+      >
+        <Colors class="size-5" />
+        <p class="text-sm">Guardar color</p>
+      </button>
+
+      <button id="share" class="rounded-full border border-neutral-900/20 p-3">
+        <Share class="size-5" />
+      </button>
+    </div>
+
+    <ul class="mt-4 flex flex-col">
       <li class="flex flex-col border-b border-neutral-900/10 py-2">
         <p class="text-xs font-semibold text-neutral-600">RGB</p>
 
@@ -62,27 +74,13 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToHex({ r, g, b }
         </button>
       </li>
     </ul>
-
-    <div class="mt-4 flex w-full items-center gap-2">
-      <button
-        id="save_color"
-        class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
-      >
-        <Colors class="size-5" />
-        <p class="text-sm">Guardar color</p>
-      </button>
-
-      <button id="share" class="rounded-full border border-neutral-900/20 p-3">
-        <Share class="size-5" />
-      </button>
-    </div>
   </main>
 </Layout>
 
 <script>
   import { getColorName, rgbToCmyk, rgbToHex } from "@/lib/colors";
   import { toast_messages } from "@/lib/consts";
-  import { saveColor } from "@/lib/utils";
+  import { deleteColor, loadColors, saveColor } from "@/lib/utils";
   import { toaster } from "@/lib/utils";
   import { nanoid } from "nanoid";
 
@@ -99,6 +97,7 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToHex({ r, g, b }
 
   const color = colorPreview.dataset.color!;
   const [r, g, b] = color.split("-").map(Number);
+  const colors = loadColors();
 
   colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
   colorName.textContent = getColorName({ r, g, b });
@@ -124,25 +123,46 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToHex({ r, g, b }
       .then(() => toaster(toast_messages.copied));
   });
 
+  const colorExists = colors.find(({ rgb }) => {
+    return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` === `rgb(${r}, ${g}, ${b})`;
+  });
+
+  if (colorExists) {
+    const saveColorButtonLabel = saveColorButton.querySelector(
+      "p"
+    ) as HTMLElement;
+    saveColorButtonLabel.textContent = "Eliminar color";
+  }
+
   saveColorButton.addEventListener("click", () => {
     if (!colorName.textContent) return;
 
-    const promp = prompt(
-      "Escribe un nombre para tu color",
-      colorName.textContent
-    );
-    if (!promp) return;
+    if (!colorExists) {
+      const promp = prompt(
+        "Escribe un nombre para tu color",
+        colorName.textContent
+      );
+      if (!promp) return;
 
-    const rawColor = rgbOutButton.dataset.color!;
-    const rgb = JSON.parse(rawColor);
+      const rawColor = rgbOutButton.dataset.color!;
+      const rgb = JSON.parse(rawColor);
 
-    const color = {
-      id: nanoid(),
-      name: promp,
-      rgb,
-    };
+      const color = {
+        id: nanoid(),
+        name: promp,
+        rgb,
+      };
 
-    saveColor(color);
+      saveColor(color);
+    } else {
+      const check = confirm(
+        "¿Estás seguro de que quieres eliminar este color?"
+      );
+      if (!check) return;
+
+      deleteColor(colorExists);
+      window.location.href = "/colors";
+    }
   });
 
   shareButton.addEventListener("click", () => {

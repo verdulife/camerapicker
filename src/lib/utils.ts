@@ -1,18 +1,7 @@
-import type { ColorSpace, UserColor } from "@/lib/types";
+import type { UserColor } from "@/lib/types";
 import { toast_messages } from "./consts";
 
 export const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-export function saveColorSpace(colorSpace: ColorSpace) {
-  localStorage.setItem("hc_colorspace", colorSpace);
-}
-
-export function loadColorSpace(): ColorSpace {
-  const localColorSpace = localStorage.getItem("hc_colorspace") as ColorSpace;
-
-  if (localColorSpace) return localColorSpace;
-  else return "rgb";
-}
 
 export function saveColor(color: UserColor) {
   const colors = loadColors();
@@ -29,6 +18,15 @@ export function loadColors(): UserColor[] {
 
   if (localColors) return JSON.parse(localColors);
   else return [];
+}
+
+export function deleteColor(color: UserColor) {
+  const colors = loadColors();
+  const index = colors.findIndex((c) => c.id === color.id);
+  colors.splice(index, 1);
+
+  const json = JSON.stringify(colors);
+  localStorage.setItem("hc_colors", json);
 }
 
 export function toaster(message: string) {

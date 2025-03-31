@@ -12,7 +12,7 @@ const isHome = pathname === "/";
   class="pointer-events-none fixed bottom-0 flex w-full items-end justify-center gap-4 p-8"
 >
   <nav
-    class="pointer-events-auto flex rounded-full bg-black px-4 text-neutral-400 border border-neutral-800"
+    class="pointer-events-auto flex rounded-full border border-neutral-800 bg-black px-4 text-neutral-400"
   >
     <a href="/colors" class="p-5">
       <Colors class="size-6" />
@@ -20,12 +20,10 @@ const isHome = pathname === "/";
 
     {
       isHome && (
-        <aside class="flex items-center gap-4">
-          <button
-            id="color_output"
-            class="pointer-events-auto size-16 scale-110 shrink-0 cursor-pointer rounded-full border-2 border-white shadow"
-          />
-        </aside>
+        <button
+          id="color_output"
+          class="pointer-events-auto size-16 shrink-0 scale-125 cursor-pointer rounded-full border-2 bg-black border-white shadow mx-2"
+        />
       )
     }
 

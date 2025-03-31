@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 import vercel from '@astrojs/vercel';
 
+import svelte from '@astrojs/svelte';
+
 export default defineConfig({
   site: "https://camerapicker.vercel.app/",
 
@@ -11,5 +13,6 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  adapter: vercel()
+  adapter: vercel(),
+  integrations: [svelte()]
 });

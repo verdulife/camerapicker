@@ -4,8 +4,6 @@ export interface RGB {
   b: number;
 }
 
-export type ColorSpace = "rgb" | "hex" | "cmyk";
-
 export interface UserColor {
   id: string;
   name: string;
