@@ -14,6 +14,7 @@ import {
   rgbToName,
   rgbToPantone,
   rgbToRal,
+  rgbToRgb,
 } from "@/lib/colors";
 
 const { color } = Astro.params;
@@ -21,16 +22,8 @@ if (!color) return Astro.redirect("/colors");
 
 const [r, g, b] = color.split("-").map(Number);
 const colorName = rgbToName({ r, g, b });
-const description = `
-  RGB: rgb(${r}, ${g}, ${b})
-  HEX: ${rgbToHex({ r, g, b })}
-  CMYK: ${rgbToCmyk({ r, g, b })}
-  PANTONE: ${rgbToPantone({ r, g, b })}
-  RAL: ${rgbToRal({ r, g, b })}
-  LAB: ${rgbToLab({ r, g, b })}
-  HSL: ${rgbToHsl({ r, g, b })}
-`;
-const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToHex({ r, g, b })}]`;
+const description = `rgb(${r}, ${g}, ${b})`;
+const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToRgb({ r, g, b })}]`;
 ---
 
 <Layout
