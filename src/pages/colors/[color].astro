@@ -14,7 +14,7 @@ if (!color) return Astro.redirect("/colors");
 const [r, g, b] = color.split("-").map(Number);
 const colorName = rgbToName({ r, g, b });
 const description = rgbToRgb({ r, g, b });
-const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb${r},${g},${b}})}]`;
+const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
 ---
 
 <Layout
