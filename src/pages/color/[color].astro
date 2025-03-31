@@ -14,13 +14,7 @@ if (!color) return Astro.redirect("/colors");
 const [r, g, b] = color.split("-").map(Number);
 const colorName = getColorName({ r, g, b });
 const description = `${colorName} - RGB: rgb(${r}, ${g}, ${b}), HEX: ${rgbToHex({ r, g, b })}, CMYK: ${rgbToCmyk({ r, g, b })}`;
-const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" fill="${rgbToHex({ r, g, b })}">
-    <rect width="1200" height="627" />
-  </svg>
-`;
-
-const image = `data:image/svg+xml;base64,${btoa(svg)}`;
+const image = `https://og.tailgraph.com/og?bgTailwind=bg-[${rgbToHex({ r, g, b })}]`;
 ---
 
 <Layout
