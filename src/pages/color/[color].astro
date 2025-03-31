@@ -11,7 +11,7 @@ import { getColorName, rgbToCmyk, rgbToHex } from "@/lib/colors";
 const { color } = Astro.params;
 if (!color) return Astro.redirect("/colors");
 
-const [r, g, b] = color.split(",").map(Number);
+const [r, g, b] = color.split("-").map(Number);
 const colorName = getColorName({ r, g, b });
 const description = `${colorName} - RGB: rgb(${r}, ${g}, ${b}), HEX: ${rgbToHex({ r, g, b })}, CMYK: ${rgbToCmyk({ r, g, b })}`;
 const svg = `
@@ -104,7 +104,7 @@ const image = `data:image/svg+xml;base64,${btoa(svg)}`;
   const shareButton = document.querySelector("#share") as HTMLElement;
 
   const color = colorPreview.dataset.color!;
-  const [r, g, b] = color.split(",").map(Number);
+  const [r, g, b] = color.split("-").map(Number);
 
   colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
   colorName.textContent = getColorName({ r, g, b });
