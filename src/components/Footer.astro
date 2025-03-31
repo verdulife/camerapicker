@@ -9,12 +9,12 @@ const isHome = pathname === "/";
 ---
 
 <footer
-  class="pointer-events-none fixed bottom-0 flex w-full items-end justify-center gap-4 p-6"
+  class="pointer-events-none fixed bottom-0 flex w-full items-end justify-center gap-4 p-8"
 >
   <nav
-    class="pointer-events-auto flex rounded-full bg-black px-4 text-neutral-400"
+    class="pointer-events-auto flex rounded-full bg-black px-4 text-neutral-400 border border-neutral-800"
   >
-    <a href="/colors" class="p-4">
+    <a href="/colors" class="p-5">
       <Colors class="size-6" />
     </a>
 
@@ -23,7 +23,7 @@ const isHome = pathname === "/";
         <aside class="flex items-center gap-4">
           <button
             id="color_output"
-            class="pointer-events-auto size-14 scale-110 shrink-0 cursor-pointer rounded-full border-2 border-white shadow"
+            class="pointer-events-auto size-16 scale-110 shrink-0 cursor-pointer rounded-full border-2 border-white shadow"
           />
         </aside>
       )
@@ -31,13 +31,13 @@ const isHome = pathname === "/";
 
     {
       !isHome && (
-        <a href="/" class="p-4">
+        <a href="/" class="p-5">
           <Hunter class="size-6" />
         </a>
       )
     }
 
-    <a href="/online" class="p-4">
+    <a href="/online" class="p-5">
       <Users class="size-6" />
     </a>
   </nav>

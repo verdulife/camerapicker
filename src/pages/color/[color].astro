@@ -1,0 +1,161 @@
+---
+export const prerender = false;
+
+import Layout from "@/layouts/Layout.astro";
+import Dots from "@/assets/Dots.astro";
+import Colors from "@/assets/Colors.astro";
+import Share from "@/assets/Share.astro";
+
+import { getColorName, rgbToCmyk, rgbToHex } from "@/lib/colors";
+
+const { color } = Astro.params;
+if (!color) return Astro.redirect("/colors");
+
+const [r, g, b] = color.split(",").map(Number);
+const colorName = getColorName({ r, g, b });
+const description = `${colorName} - RGB: rgb(${r}, ${g}, ${b}), HEX: ${rgbToHex({ r, g, b })}, CMYK: ${rgbToCmyk({ r, g, b })}`;
+const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" fill="${rgbToHex({ r, g, b })}">
+    <rect width="1200" height="627" />
+  </svg>
+`;
+
+const image = `data:image/svg+xml;base64,${btoa(svg)}`;
+---
+
+<Layout
+  customTitle={colorName}
+  customDescription={description}
+  customImage={image}
+>
+  <main
+    class="flex flex-1 flex-col gap-2 rounded-3xl bg-white p-5 py-36 text-neutral-900"
+  >
+    <figure
+      data-color={color}
+      id="colorPreview"
+      class="aspect-video w-full rounded-2xl border border-neutral-800/10"
+    >
+    </figure>
+
+    <h1 id="colorName" class="mt-2 text-lg font-bold capitalize"></h1>
+
+    <ul class="flex flex-col">
+      <li class="flex flex-col border-b border-neutral-900/10 py-2">
+        <p class="text-xs font-semibold text-neutral-600">RGB</p>
+
+        <button id="rgbOut" class="flex w-full items-center justify-between">
+          <p>rgb(0, 0, 0)</p>
+          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+        </button>
+      </li>
+
+      <li class="flex flex-col border-b border-neutral-900/10 py-2">
+        <p class="text-xs font-semibold text-neutral-600">HEX</p>
+
+        <button id="hexOut" class="flex w-full items-center justify-between">
+          <p>#000000</p>
+          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+        </button>
+      </li>
+
+      <li class="flex flex-col py-2">
+        <p class="text-xs font-semibold text-neutral-600">CMYK</p>
+
+        <button id="cmykOut" class="flex w-full items-center justify-between">
+          <p>0C 0M 0Y 0K</p>
+          <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
+        </button>
+      </li>
+    </ul>
+
+    <div class="mt-4 flex w-full items-center gap-2">
+      <button
+        id="save_color"
+        class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
+      >
+        <Colors class="size-5" />
+        <p class="text-sm">Guardar color</p>
+      </button>
+
+      <button id="share" class="rounded-full border border-neutral-900/20 p-3">
+        <Share class="size-5" />
+      </button>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { getColorName, rgbToCmyk, rgbToHex } from "@/lib/colors";
+  import { toast_messages } from "@/lib/consts";
+  import { saveColor } from "@/lib/utils";
+  import { toaster } from "@/lib/utils";
+  import { nanoid } from "nanoid";
+
+  const colorPreview = document.querySelector("#colorPreview") as HTMLElement;
+  const colorName = document.querySelector("#colorName") as HTMLElement;
+  const rgbOutButton = document.querySelector("#rgbOut") as HTMLElement;
+  const hexOutButton = document.querySelector("#hexOut") as HTMLElement;
+  const cmykOutButton = document.querySelector("#cmykOut") as HTMLElement;
+  const rgbOut = rgbOutButton.querySelector("p") as HTMLElement;
+  const hexOut = hexOutButton.querySelector("p") as HTMLElement;
+  const cmykOut = cmykOutButton.querySelector("p") as HTMLElement;
+  const saveColorButton = document.querySelector("#save_color") as HTMLElement;
+  const shareButton = document.querySelector("#share") as HTMLElement;
+
+  const color = colorPreview.dataset.color!;
+  const [r, g, b] = color.split(",").map(Number);
+
+  colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+  colorName.textContent = getColorName({ r, g, b });
+  rgbOut.textContent = `rgb(${r}, ${g}, ${b})`;
+  hexOut.textContent = rgbToHex({ r, g, b });
+  cmykOut.textContent = rgbToCmyk({ r, g, b });
+
+  rgbOutButton.addEventListener("click", () => {
+    navigator.clipboard
+      .writeText(`rgb(${r}, ${g}, ${b})`)
+      .then(() => toaster(toast_messages.copied));
+  });
+
+  hexOutButton.addEventListener("click", () => {
+    navigator.clipboard
+      .writeText(rgbToHex({ r, g, b }))
+      .then(() => toaster(toast_messages.copied));
+  });
+
+  cmykOutButton.addEventListener("click", () => {
+    navigator.clipboard
+      .writeText(rgbToCmyk({ r, g, b }))
+      .then(() => toaster(toast_messages.copied));
+  });
+
+  saveColorButton.addEventListener("click", () => {
+    if (!colorName.textContent) return;
+
+    const promp = prompt(
+      "Escribe un nombre para tu color",
+      colorName.textContent
+    );
+    if (!promp) return;
+
+    const rawColor = rgbOutButton.dataset.color!;
+    const rgb = JSON.parse(rawColor);
+
+    const color = {
+      id: nanoid(),
+      name: promp,
+      rgb,
+    };
+
+    saveColor(color);
+  });
+
+  shareButton.addEventListener("click", () => {
+    const shareData = {
+      url: window.location.href,
+    };
+
+    navigator.share(shareData);
+  });
+</script>
