@@ -8,17 +8,17 @@ import Share from "@/assets/Share.astro";
 <div
   data-color='{"r":0,"g":0,"b":0}'
   id="colorDialog"
-  class="fixed bottom-0 z-30 flex max-h-3/4 w-full translate-y-full flex-col gap-2 rounded-tl-3xl rounded-tr-3xl bg-white p-5 text-neutral-900 shadow transition-transform duration-300"
+  class="fixed bottom-0 z-30 flex max-h-9/12 w-full translate-y-full flex-col gap-2 rounded-tl-3xl rounded-tr-3xl bg-white text-neutral-900 shadow transition-transform duration-300 overflow-clip"
 >
   <figure
     id="colorPreview"
-    class="aspect-[21/9] w-full rounded-2xl border border-neutral-800/10"
+    class="aspect-video w-full border border-neutral-800/10 px-5"
   >
   </figure>
 
-  <h1 id="colorName" class="mt-2 text-lg font-bold capitalize"></h1>
+  <h1 id="colorName" class="mt-2 px-5 text-lg font-bold capitalize"></h1>
 
-  <div class="flex w-full items-center gap-2">
+  <div class="flex w-full items-center gap-2 px-5">
     <button
       id="save_color"
       class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
@@ -32,7 +32,7 @@ import Share from "@/assets/Share.astro";
     </button>
   </div>
 
-  <ul class="mt-4 flex flex-col overflow-y-auto">
+  <ul class="mt-4 flex flex-col overflow-y-auto px-5 pb-5 border-t border-neutral-900/10">
     <li class="flex flex-col border-b border-neutral-900/10 py-2">
       <p class="text-xs font-semibold text-neutral-600">RGB</p>
 
