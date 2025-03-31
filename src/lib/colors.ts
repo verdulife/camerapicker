@@ -29,7 +29,7 @@ export function rgbToCmyk({ r, g, b }: RGB): string {
     to: "cmyk",
   });
 
-  return `${cmyk.c}M ${cmyk.m}Y ${cmyk.y}K ${cmyk.k}K`;
+  return `${cmyk.c}C ${cmyk.m}M ${cmyk.y}Y ${cmyk.k}K`;
 }
 
 export function rgbToPantone({ r, g, b }: RGB): string {
