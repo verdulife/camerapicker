@@ -171,15 +171,27 @@ const image = `https://og.tailgraph.com/og?logoUrl=https%3A%2F%2Fcamerapicker.ve
   const hslOut = hslOutButton.querySelector("p") as HTMLElement;
 
   const saveColorButton = document.querySelector("#save_color") as HTMLElement;
+  const saveColorButtonLabel = saveColorButton.querySelector(
+    "p"
+  ) as HTMLElement;
   const shareButton = document.querySelector("#share") as HTMLElement;
 
   const color = colorPreview.dataset.color!;
   const colors = loadColors();
   const [r, g, b] = color.split("-").map(Number);
   const rgb_values = { r, g, b };
+  const colorExists = colors.find(({ rgb }) => {
+    return rgbToRgb(rgb) === rgbToRgb(rgb_values);
+  });
+
+  if (colorExists) {
+    saveColorButtonLabel.textContent = "Eliminar color";
+  }
 
   colorPreview.style.backgroundColor = rgbToRgb(rgb_values);
-  colorName.textContent = rgbToName(rgb_values);
+  colorName.textContent = colorExists
+    ? colorExists.name
+    : rgbToName(rgb_values);
   rgbOut.textContent = rgbToRgb(rgb_values);
   hexOut.textContent = rgbToHex(rgb_values);
   cmykOut.textContent = rgbToCmyk(rgb_values);
@@ -229,17 +241,6 @@ const image = `https://og.tailgraph.com/og?logoUrl=https%3A%2F%2Fcamerapicker.ve
       .writeText(rgbToHsl(rgb_values))
       .then(() => toaster(toast_messages.copied));
   });
-
-  const colorExists = colors.find(({ rgb }) => {
-    return rgbToRgb(rgb) === rgbToRgb(rgb_values);
-  });
-
-  if (colorExists) {
-    const saveColorButtonLabel = saveColorButton.querySelector(
-      "p"
-    ) as HTMLElement;
-    saveColorButtonLabel.textContent = "Eliminar color";
-  }
 
   saveColorButton.addEventListener("click", () => {
     if (!colorName.textContent) return;
