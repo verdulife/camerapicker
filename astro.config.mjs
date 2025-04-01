@@ -5,7 +5,7 @@ import vercel from '@astrojs/vercel';
 import svelte from '@astrojs/svelte';
 
 export default defineConfig({
-  site: "https://camerapicker.vercel.app/",
+  site: "https://huntercolor.vercel.app/",
 
   vite: {
     plugins: [tailwindcss()]
