@@ -9,20 +9,13 @@ import ColorDialog from "@/components/ColorDialog.astro";
       playsinline
       autoplay
       muted
-      class="absolute top-0 left-0 size-full border-2 border-green-500 object-cover"
+      class="absolute top-0 left-0 size-full"
     >
     </video>
 
-    <canvas
-      class="pointer-events-none absolute top-0 left-0 border-5 border-red-500"
-    ></canvas>
+    <canvas class="pointer-events-none absolute top-0 left-0"></canvas>
 
     <ColorDialog />
-
-    <pre
-      id="debug"
-      class="fixed top-0 right-0 z-50 border border-neutral-800/10 bg-black/50 p-3 font-mono text-sm text-white">
-    </pre>
   </section>
 </Layout>
 
@@ -52,31 +45,17 @@ import ColorDialog from "@/components/ColorDialog.astro";
     colorSpace: "display-p3",
   });
   const { innerWidth, innerHeight } = window;
-  const aspectRatio =
-    innerWidth > innerHeight
-      ? innerWidth / innerHeight
-      : innerHeight / innerWidth;
 
   let selection = { x: 0, y: 0, size: 65, zoom: 1.25 };
   let targetSelection = { x: 0, y: 0 };
   let rgb_values = { r: 0, g: 0, b: 0 };
 
-  /* const videoOpts = isTouchDevice
-    ? {
-        facingMode: "environment",
-        aspectRatio: innerHeight / innerWidth,
-      }
-    : {
-        facingMode: "environment",
-        aspectRatio: innerWidth / innerHeight,
-        width: innerWidth,
-      }; */
-
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: false,
     video: {
-      facingMode: "environment",
-      aspectRatio,
+      width: isTouchDevice ? innerHeight : innerWidth,
+      height: isTouchDevice ? innerWidth : innerHeight,
+      facingMode: "enviorment",
     },
   });
 
@@ -91,8 +70,6 @@ import ColorDialog from "@/components/ColorDialog.astro";
     canvas.width = innerWidth;
     canvas.height = innerHeight;
 
-    ctx.scale(scaleX, scaleY);
-
     selection.x = targetSelection.x =
       innerWidth / 2 - (selection.size * selection.zoom) / 2;
     selection.y = targetSelection.y =
@@ -101,24 +78,6 @@ import ColorDialog from "@/components/ColorDialog.astro";
     drawSelection();
     animateSelection();
     analyzeColor();
-
-    const debug = document.querySelector("#debug") as HTMLElement;
-    debug.textContent = JSON.stringify(
-      {
-        videoWidth,
-        videoHeight,
-        innerWidth,
-        innerHeight,
-        canvasWidth: canvas.width,
-        canvasHeight: canvas.height,
-        scaleX,
-        scaleY,
-        ctxWidth: ctx.canvas.width,
-        ctxHeight: ctx.canvas.height,
-      },
-      null,
-      2
-    );
   });
 
   function drawSelection() {
