@@ -1,12 +1,11 @@
 <script>
-  import Dots from "@/assets/Dots.svelte";
-  import { rgbToCmyk, rgbToHex } from "@/lib/colors";
+  import { rgbToRgb } from "@/lib/colors";
 
   export let color;
   const { id, name, rgb } = color;
   const { r, g, b } = rgb;
 
-  const rgbOut = `rgb(${r}, ${g}, ${b})`;
+  const rgbOut = rgbToRgb(rgb);
 </script>
 
 <article
