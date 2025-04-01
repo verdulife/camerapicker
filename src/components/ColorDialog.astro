@@ -19,7 +19,11 @@ import Share from "@/assets/Share.astro";
   </header>
 
   <main class="px-5">
-    <h1 id="colorName" class="mt-2 text-xl font-bold"></h1>
+    <input
+      type="text"
+      id="colorName"
+      class="mt-2 text-xl font-bold outline-none"
+    />
 
     <div class="mt-4 flex w-full items-center gap-2">
       <button
@@ -134,7 +138,7 @@ import Share from "@/assets/Share.astro";
   const colorDialog = document.querySelector("#colorDialog") as HTMLElement;
 
   const colorPreview = document.querySelector("#colorPreview") as HTMLElement;
-  const colorName = document.querySelector("#colorName") as HTMLElement;
+  const colorName = document.querySelector("#colorName") as HTMLInputElement;
 
   const rgbOutButton = document.querySelector("#rgbOut") as HTMLElement;
   const rgbOut = rgbOutButton.querySelector("p") as HTMLElement;
@@ -166,7 +170,7 @@ import Share from "@/assets/Share.astro";
     rgb_values = { r, g, b };
 
     colorPreview.style.backgroundColor = rgbToRgb(rgb_values);
-    colorName.textContent = rgbToName(rgb_values);
+    colorName.value = rgbToName(rgb_values);
     rgbOut.textContent = rgbToRgb(rgb_values);
     hexOut.textContent = rgbToHex(rgb_values);
     cmykOut.textContent = rgbToCmyk(rgb_values);
@@ -228,18 +232,12 @@ import Share from "@/assets/Share.astro";
   });
 
   saveColorButton.addEventListener("click", () => {
-    if (!colorName.textContent) return;
-
-    const promp = prompt(
-      "Escribe un nombre para tu color",
-      colorName.textContent
-    );
-    if (!promp) return;
+    const name = colorName.value || rgbToName(rgb_values);
 
     const color = {
       id: nanoid(),
-      name: promp,
       rgb: rgb_values,
+      name,
     };
 
     saveColor(color);
