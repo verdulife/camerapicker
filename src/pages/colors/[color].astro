@@ -25,37 +25,42 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
   <main
     class="from-violet to-magenta flex flex-1 flex-col items-center gap-2 bg-gradient-to-tr text-neutral-900"
   >
-    <div class="flex size-full max-h-svh max-w-md flex-col gap-2 bg-white">
-      <figure
-        data-color={color}
-        id="colorPreview"
-        class="aspect-[4/3] w-full border border-neutral-800/10"
-      >
-      </figure>
-
-      <h1 id="colorName" class="mt-2 px-5 text-lg font-bold capitalize"></h1>
-
-      <div class="flex w-full items-center gap-2 px-5">
-        <button
-          id="save_color"
-          class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 p-3"
+    <div class="flex size-full max-h-svh max-w-lg flex-col gap-2 bg-white">
+      <header>
+        <figure
+          data-color={color}
+          id="colorPreview"
+          class="aspect-[4/3] w-full border border-neutral-800/10"
         >
-          <Colors class="size-5" />
-          <p class="text-sm">Guardar color</p>
-        </button>
+        </figure>
+      </header>
 
-        <button
-          id="share"
-          class="rounded-full border border-neutral-900/20 p-3"
-        >
-          <Share class="size-5" />
-        </button>
-      </div>
+      <main class="px-5">
+        <h1 id="colorName" class="mt-2 text-xl font-bold"></h1>
+
+        <div class="mt-4 flex w-full items-center gap-2">
+          <button
+            id="save_color"
+            class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 px-6 py-3"
+          >
+            <Colors class="size-5" />
+            <p class="text-sm">Guardar color</p>
+          </button>
+
+          <button
+            id="share"
+            class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 px-6 py-3"
+          >
+            <Share class="size-5" />
+            <p class="text-sm">Compartir</p>
+          </button>
+        </div>
+      </main>
 
       <ul
-        class="mt-4 flex flex-col overflow-y-auto border-t border-neutral-900/10 px-5 pb-32"
+        class="mt-4 flex flex-col overflow-y-auto border-t border-neutral-900/10 pb-32"
       >
-        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+        <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
           <p class="text-xs font-semibold text-neutral-600">RGB</p>
 
           <button id="rgbOut" class="flex w-full items-center justify-between">
@@ -64,7 +69,7 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
           </button>
         </li>
 
-        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+        <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
           <p class="text-xs font-semibold text-neutral-600">HEX</p>
 
           <button id="hexOut" class="flex w-full items-center justify-between">
@@ -73,7 +78,7 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
           </button>
         </li>
 
-        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+        <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
           <p class="text-xs font-semibold text-neutral-600">CMYK</p>
 
           <button id="cmykOut" class="flex w-full items-center justify-between">
@@ -82,7 +87,7 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
           </button>
         </li>
 
-        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+        <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
           <p class="text-xs font-semibold text-neutral-600">Pantone</p>
 
           <button
@@ -94,7 +99,7 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
           </button>
         </li>
 
-        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+        <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
           <p class="text-xs font-semibold text-neutral-600">RAL</p>
 
           <button id="ralOut" class="flex w-full items-center justify-between">
@@ -103,7 +108,7 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
           </button>
         </li>
 
-        <li class="flex flex-col border-b border-neutral-900/10 py-2">
+        <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
           <p class="text-xs font-semibold text-neutral-600">LAB</p>
 
           <button id="labOut" class="flex w-full items-center justify-between">
@@ -112,7 +117,7 @@ const image = `https://og.tailgraph.com/og?bgTailwind=bg-[rgb(${r},${g},${b})]`;
           </button>
         </li>
 
-        <li class="flex flex-col py-2">
+        <li class="flex flex-col px-5 py-3">
           <p class="text-xs font-semibold text-neutral-600">HSL</p>
 
           <button id="hslOut" class="flex w-full items-center justify-between">
