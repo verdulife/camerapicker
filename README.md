@@ -6,10 +6,11 @@ Captura colores con tu teléfono o tableta, guarda tus favoritos y compártelos.
 
 ## 🖼️ Pantallazos
 
-<img src="https://github.com/verdulife/camerapicker/blob/master/public/screenshots/hc-1.jpg?raw=true" width="160">
-<img src="https://github.com/verdulife/camerapicker/blob/master/public/screenshots/hc-2.jpg?raw=true" width="160">
-<img src="https://github.com/verdulife/camerapicker/blob/master/public/screenshots/hc-3.jpg?raw=true" width="160">
-|
+<p float="left">
+  <img src="https://github.com/verdulife/camerapicker/blob/master/public/screenshots/hc-1.jpg?raw=true" width="200">
+  <img src="https://github.com/verdulife/camerapicker/blob/master/public/screenshots/hc-2.jpg?raw=true" width="200">
+  <img src="https://github.com/verdulife/camerapicker/blob/master/public/screenshots/hc-3.jpg?raw=true" width="200">
+</p>
 
 ## ⚡ Feedback
 
