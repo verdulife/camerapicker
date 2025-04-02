@@ -1,7 +1,7 @@
 {
   "background_color": "#000000",
   "theme_color": "#000000",
-  "name": "HunterColor™ | The camera color picker",
+  "name": "HunterColor™ | Captura, guarda y comparte colores",
   "short_name": "HunterColor™",
   "display": "standalone",
   "start_url": "/",
