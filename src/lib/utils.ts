@@ -9,7 +9,6 @@ export function saveColor(color: UserColor) {
   localStorage.setItem("hc_colors", json);
 
   toaster(toast_messages.saved);
-  window.location.pathname = "/colors";
 }
 
 export function loadColors(): UserColor[] {

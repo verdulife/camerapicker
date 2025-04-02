@@ -241,6 +241,9 @@ import Share from "@/assets/Share.astro";
     };
 
     saveColor(color);
+    hunterButton.dataset.running = "true";
+    colorDialog.classList.remove("active");
+    outerDialog.classList.add("hidden");
   });
 
   shareButton.addEventListener("click", () => {
