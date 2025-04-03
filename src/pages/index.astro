@@ -1,12 +1,12 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import Camera from "@/components/Camera.svelte";
-import ColorPreview from "@/components/ColorPreview.svelte";
+import Dialog from "@/components/Dialog.svelte";
 ---
 
 <Layout>
   <section class="bg-violet relative h-svh w-full overflow-clip">
     <Camera client:only />
-    <ColorPreview client:only />
+    <Dialog client:only />
   </section>
 </Layout>

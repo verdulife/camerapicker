@@ -14,7 +14,7 @@
 </script>
 
 <footer
-  class="pointer-events-none fixed bottom-0 flex w-full items-end justify-center gap-4 p-8"
+  class="pointer-events-none fixed bottom-10 flex w-full items-end justify-center gap-4"
 >
   <nav
     class="pointer-events-auto flex rounded-full border border-neutral-800 bg-black px-4 text-neutral-400"
