@@ -39,7 +39,7 @@ export function drawAnalizer(
     analizerCanvas.height * selection.zoom
   );
 
-  /* analizerCtx.restore();
+  analizerCtx.restore();
   analizerCtx.strokeStyle = "white";
   analizerCtx.lineWidth = 1;
   analizerCtx.beginPath();
@@ -50,7 +50,7 @@ export function drawAnalizer(
     0,
     Math.PI * 2
   );
-  analizerCtx.stroke(); */
+  analizerCtx.stroke();
 
   analizerCtx.strokeStyle = "rgba(255, 255, 255, 0.1)";
   analizerCtx.lineWidth = 0.4;

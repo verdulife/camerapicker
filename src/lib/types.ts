@@ -5,7 +5,10 @@ export interface RGB {
 }
 
 export interface UserColor {
-  id: string;
   name: string;
   rgb: RGB;
 }
+
+export interface UserColorStorage extends UserColor {
+  id: string;
+} 

@@ -1,6 +1,7 @@
 <script>
   import { slide } from "svelte/transition";
   import { rgb_values, previewState } from "@/lib/stores";
+  import { saveColor, shareColor, copyColorValue } from "@/lib/utils";
   import {
     rgbToCmyk,
     rgbToHex,
@@ -34,9 +35,14 @@
     $previewState = false;
   }
 
-  function saveColor() {}
+  function saveAndClosePreview() {
+    saveColor({
+      rgb: $rgb_values,
+      name: colorName,
+    });
 
-  function shareColor() {}
+    closePreview();
+  }
 </script>
 
 {#if $previewState}
@@ -55,7 +61,7 @@
       <figure
         id="colorPreview"
         style="background-color: {rgb}"
-        class="aspect-video w-full rounded-tl-3xl rounded-tr-3xl border-b border-neutral-800/10 px-5"
+        class="h-[25svh] w-full rounded-tl-3xl rounded-tr-3xl border-b border-neutral-800/10 px-5"
       ></figure>
     </header>
 
@@ -71,7 +77,7 @@
         <button
           id="save_color"
           class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 px-6 py-3"
-          on:click={saveColor}
+          on:click={saveAndClosePreview}
         >
           <Colors class="size-5" />
           <p class="text-sm">Guardar color</p>
@@ -80,7 +86,7 @@
         <button
           id="share"
           class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 px-6 py-3"
-          on:click={shareColor}
+          on:click={() => shareColor($rgb_values)}
         >
           <Share class="size-5" />
           <p class="text-sm">Compartir</p>
@@ -94,7 +100,11 @@
       <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
         <p class="text-xs font-semibold text-neutral-600">RGB</p>
 
-        <button id="rgbOut" class="flex w-full items-center justify-between">
+        <button
+          id="rgbOut"
+          class="flex w-full items-center justify-between"
+          on:click={() => copyColorValue(rgb)}
+        >
           <p>{rgb}</p>
           <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
         </button>
@@ -103,7 +113,11 @@
       <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
         <p class="text-xs font-semibold text-neutral-600">HEX</p>
 
-        <button id="hexOut" class="flex w-full items-center justify-between">
+        <button
+          id="hexOut"
+          class="flex w-full items-center justify-between"
+          on:click={() => copyColorValue(hex)}
+        >
           <p>{hex}</p>
           <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
         </button>
@@ -112,7 +126,11 @@
       <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
         <p class="text-xs font-semibold text-neutral-600">CMYK</p>
 
-        <button id="cmykOut" class="flex w-full items-center justify-between">
+        <button
+          id="cmykOut"
+          class="flex w-full items-center justify-between"
+          on:click={() => copyColorValue(cmyk)}
+        >
           <p>{cmyk}</p>
           <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
         </button>
@@ -124,6 +142,7 @@
         <button
           id="pantoneOut"
           class="flex w-full items-center justify-between"
+          on:click={() => copyColorValue(pantone)}
         >
           <p>{pantone}</p>
           <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
@@ -133,7 +152,11 @@
       <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
         <p class="text-xs font-semibold text-neutral-600">RAL</p>
 
-        <button id="ralOut" class="flex w-full items-center justify-between">
+        <button
+          id="ralOut"
+          class="flex w-full items-center justify-between"
+          on:click={() => copyColorValue(ral)}
+        >
           <p>{ral}</p>
           <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
         </button>
@@ -142,7 +165,11 @@
       <li class="flex flex-col border-b border-neutral-900/10 px-5 py-3">
         <p class="text-xs font-semibold text-neutral-600">LAB</p>
 
-        <button id="labOut" class="flex w-full items-center justify-between">
+        <button
+          id="labOut"
+          class="flex w-full items-center justify-between"
+          on:click={() => copyColorValue(lab)}
+        >
           <p>{lab}</p>
           <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
         </button>
@@ -151,7 +178,11 @@
       <li class="flex flex-col px-5 py-3">
         <p class="text-xs font-semibold text-neutral-600">HSL</p>
 
-        <button id="hslOut" class="flex w-full items-center justify-between">
+        <button
+          id="hslOut"
+          class="flex w-full items-center justify-between"
+          on:click={() => copyColorValue(hsl)}
+        >
           <p>{hsl}</p>
           <Dots class="pointer-events-none right-4 size-4 text-neutral-400" />
         </button>

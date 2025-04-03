@@ -25,6 +25,9 @@
 
   onMount(() => {
     colors = JSON.parse(localStorage.getItem("hc_colors"));
+
+    console.log(colors);
+    
   });
 </script>
 
