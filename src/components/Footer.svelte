@@ -1,16 +1,17 @@
 <script lang="ts">
-  import { rgb_values } from "@/lib/stores";
+  import { rgb_values, previewState } from "@/lib/stores";
   import Colors from "@/assets/Colors.svelte";
   import Hunter from "@/assets/Hunter.svelte";
   import Users from "@/assets/Users.svelte";
+  import { rgbToRgb } from "@/lib/colors";
 
   export let pathname: string;
   const isHome = pathname === "/";
 
-  $: console.log($rgb_values);
+  function openPreview() {
+    $previewState = true;
+  }
 </script>
-
----
 
 <footer
   class="pointer-events-none fixed bottom-0 flex w-full items-end justify-center gap-4 p-8"
@@ -25,8 +26,9 @@
     {#if isHome}
       <button
         aria-label="color_output"
-        id="color_output"
+        style="background-color: {rgbToRgb($rgb_values)}"
         class="pointer-events-auto size-16 shrink-0 scale-125 cursor-pointer rounded-full border-2 bg-black border-white shadow mx-2"
+        on:click={openPreview}
       >
       </button>
     {:else}

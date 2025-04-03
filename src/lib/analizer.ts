@@ -1,3 +1,6 @@
+import ColorThief from "colorthief";
+import type { RGB } from "@/lib/types";
+
 export function drawAnalizer(
   ctx: CanvasRenderingContext2D | null,
   analizerCtx: CanvasRenderingContext2D | null,
@@ -10,7 +13,7 @@ export function drawAnalizer(
 
   analizerCtx.save();
   analizerCtx.beginPath();
-  
+
   // Analizer wrapper
   analizerCtx.arc(
     analizerCanvas.width / 2,
@@ -19,11 +22,11 @@ export function drawAnalizer(
     0,
     Math.PI * 2
   );
-  
+
   analizerCtx.closePath();
   analizerCtx.clip();
 
-  // Analizar video
+  // Analizer video
   analizerCtx.drawImage(
     video,
     selection.x + selection.size / 2,
@@ -36,7 +39,7 @@ export function drawAnalizer(
     analizerCanvas.height * selection.zoom
   );
 
-  analizerCtx.restore();
+  /* analizerCtx.restore();
   analizerCtx.strokeStyle = "white";
   analizerCtx.lineWidth = 1;
   analizerCtx.beginPath();
@@ -47,7 +50,7 @@ export function drawAnalizer(
     0,
     Math.PI * 2
   );
-  analizerCtx.stroke();
+  analizerCtx.stroke(); */
 
   analizerCtx.strokeStyle = "rgba(255, 255, 255, 0.1)";
   analizerCtx.lineWidth = 0.4;
@@ -102,4 +105,25 @@ export function drawAnalizer(
     Math.PI * 2
   );
   ctx.stroke();
+}
+
+export async function analyzeColor(
+  ctx: CanvasRenderingContext2D | null,
+  selection: { x: number; y: number; size: number; zoom: number },
+  analizerCanvas: HTMLCanvasElement
+): Promise<RGB | undefined> {
+  if (!ctx) return;
+
+  ctx.getImageData(selection.x, selection.y, selection.size, selection.size);
+
+  const img = new Image();
+  img.src = analizerCanvas.toDataURL();
+
+  return new Promise((resolve) => {
+    img.onload = () => {
+      const colorThief = new ColorThief();
+      const [r, g, b] = colorThief.getColor(img)!;
+      resolve({ r, g, b });
+    };
+  });
 }
