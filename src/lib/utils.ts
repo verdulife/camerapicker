@@ -1,4 +1,4 @@
-import type { RGB, UserColor, UserColorStorage } from "@/lib/types";
+import type { RGB, UserColor, UserColorStorage, UserColorUrl } from "@/lib/types";
 import { toast_messages } from "@/lib/consts";
 import { nanoid } from "nanoid";
 
@@ -24,6 +24,16 @@ export function loadColors(): UserColorStorage[] {
   else return [];
 }
 
+export function updateColor(color: UserColorStorage) {
+  const colors = loadColors();
+  const index = colors.findIndex((c) => c.id === color.id);
+  colors[index] = color;
+
+  const json = JSON.stringify(colors);
+  localStorage.setItem("hc_colors", json);
+  toaster(toast_messages.updated);
+}
+
 export function deleteColor(color: UserColorStorage) {
   const colors = loadColors();
   const index = colors.findIndex((c) => c.id === color.id);
@@ -33,10 +43,10 @@ export function deleteColor(color: UserColorStorage) {
   localStorage.setItem("hc_colors", json);
 }
 
-export function shareColor(rgb_values: RGB) {
-  const { r, g, b } = rgb_values;
+export function shareColor(color: UserColor) {
+  const { origin } = window.location;
   const shareData = {
-    url: `${window.location.href}colors/${r}-${g}-${b}`,
+    url: `${origin}/${userColorToUrl(color)}`,
   };
 
   if (!navigator.share) {
@@ -65,4 +75,9 @@ export function toaster(message: string) {
   setTimeout(() => {
     toast.classList.remove("active");
   }, 1500);
+}
+
+export function userColorToUrl({ name, rgb, id }: UserColorUrl) {
+  const { r, g, b } = rgb;
+  return `colors/color?name=${name}&rgb=${r}-${g}-${b}&id=${id}`;
 }

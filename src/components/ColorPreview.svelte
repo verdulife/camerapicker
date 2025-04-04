@@ -7,6 +7,7 @@
     copyColorValue,
     loadColors,
     deleteColor,
+    updateColor,
   } from "@/lib/utils";
   import {
     rgbToCmyk,
@@ -24,7 +25,9 @@
   import Edit from "@/assets/Edit.svelte";
   import { onMount } from "svelte";
 
+  export let name: string;
   export let rgb_values: RGB;
+  export let id: string;
 
   let colorName: string,
     rgb: string,
@@ -35,10 +38,10 @@
     lab: string,
     hsl: string,
     colors: UserColorStorage[],
-    colorExists: UserColorStorage | undefined;
+    colorOwner: UserColorStorage | undefined;
 
   function updateValues() {
-    colorName = rgbToName(rgb_values);
+    colorName = name || rgbToName(rgb_values);
     rgb = rgbToRgb(rgb_values);
     hex = rgbToHex(rgb_values);
     cmyk = rgbToCmyk(rgb_values);
@@ -54,7 +57,7 @@
 
   onMount(() => {
     colors = loadColors();
-    colorExists = colors.find((c) => c.name === colorName);
+    colorOwner = colors.find((color) => color.id === id);
   });
 
   function saveAndClosePreview() {
@@ -69,9 +72,15 @@
   }
 
   function deleteAndBack() {
-    if (!colorExists) return;
-    deleteColor(colorExists);
+    if (!colorOwner) return;
+    deleteColor(colorOwner);
     window.history.back();
+  }
+
+  function updateName() {
+    if ($previewState) return;
+    const name = colorName || rgbToName(rgb_values);
+    updateColor({ id, name, rgb: rgb_values });
   }
 </script>
 
@@ -93,13 +102,14 @@
         id="colorName"
         class="text-xl font-bold outline-none grow"
         bind:value={colorName}
+        on:blur={updateName}
       />
 
       <Edit class="size-5" />
     </label>
 
     <div class="mt-5 flex w-full items-center gap-2">
-      {#if colorExists && !$previewState}
+      {#if colorOwner}
         <button
           id="save_color"
           class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 px-6 py-3"
@@ -124,7 +134,7 @@
       <button
         id="share"
         class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 px-6 py-3"
-        on:click={() => shareColor(rgb_values)}
+        on:click={() => shareColor({ name: colorName, rgb: rgb_values })}
       >
         <Share class="size-5" />
         <p class="text-sm">Compartir</p>

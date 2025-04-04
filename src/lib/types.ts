@@ -11,4 +11,10 @@ export interface UserColor {
 
 export interface UserColorStorage extends UserColor {
   id: string;
-} 
+}
+
+export interface UserColorUrl {
+  name?: string;
+  rgb: RGB;
+  id?: string;
+}

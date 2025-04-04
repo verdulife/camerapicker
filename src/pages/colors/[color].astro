@@ -1,16 +1,19 @@
 ---
 export const prerender = false;
 
+import { rgbToName, rgbToRgb } from "@/lib/colors";
 import Layout from "@/layouts/Layout.astro";
 import ColorPreview from "@/components/ColorPreview.svelte";
 
-import { rgbToName, rgbToRgb } from "@/lib/colors";
+const id = Astro.url.searchParams.get("id");
+const rgb = Astro.url.searchParams.get("rgb");
+const name = Astro.url.searchParams.get("name");
 
-const { color } = Astro.params;
-if (!color) return Astro.redirect("/colors");
+if (!rgb) return Astro.redirect("/colors");
 
-const [r, g, b] = color.split("-").map(Number);
+const [r, g, b] = rgb ? rgb.split("-").map(Number) : [0, 0, 0];
 const rgb_values = { r, g, b };
+
 const colorName = rgbToName({ r, g, b });
 const description = rgbToRgb({ r, g, b });
 const image = `https://og.tailgraph.com/og?logoUrl=https%3A%2F%2Fhuntercolor.vercel.app%2Flogo-og.png&logoTailwind=w-xl&bgTailwind=bg-[rgb(${r},${g},${b})]&refresh=1`;
@@ -22,8 +25,8 @@ const image = `https://og.tailgraph.com/og?logoUrl=https%3A%2F%2Fhuntercolor.ver
   customImage={image}
 >
   <main
-    class="bg-violet flex h-svh flex-col items-center gap-2 text-neutral-900" 
+    class="bg-violet flex h-svh flex-col items-center gap-2 text-neutral-900"
   >
-    <ColorPreview {rgb_values} client:only />
+    <ColorPreview {name} {rgb_values} {id} client:only />
   </main>
 </Layout>
