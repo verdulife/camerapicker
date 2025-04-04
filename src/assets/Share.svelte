@@ -2,7 +2,7 @@
   viewBox="0 0 16 16"
   fill="currentColor"
   stroke="currentColor"
-  class={Astro.props.class}
+  class={$$props.class}
 >
   <path
     stroke-linecap="round"

@@ -1,4 +1,4 @@
-<svg viewBox="0 0 16 16" fill="currentColor" class={Astro.props.class}>
+<svg viewBox="0 0 16 16" fill="currentColor" class={$$props.class}>
   <path
     fill-rule="evenodd"
     d="M1.5 2.75c0 -0.6906666666666667 0.5599999999999999 -1.25 1.25 -1.25h3.5c0.6906666666666667 0 1.25 0.5599999999999999 1.25 1.25V11.5a3 3 0 1 1 -6 0V2.75Zm3 9.5a0.75 0.75 0 1 0 0 -1.5 0.75 0.75 0 0 0 0 1.5Z"
