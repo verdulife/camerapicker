@@ -29,6 +29,8 @@
   export let rgb_values: RGB;
   export let id: string;
 
+  const { r, g, b } = rgb_values;
+
   let colorName: string,
     rgb: string,
     hex: string,
@@ -41,30 +43,27 @@
     colorOwner: UserColorStorage | undefined;
 
   function updateValues() {
-    colorName = name || rgbToName(rgb_values);
-    rgb = rgbToRgb(rgb_values);
-    hex = rgbToHex(rgb_values);
-    cmyk = rgbToCmyk(rgb_values);
-    pantone = rgbToPantone(rgb_values);
-    ral = rgbToRal(rgb_values);
-    lab = rgbToLab(rgb_values);
-    hsl = rgbToHsl(rgb_values);
+    colorName = name || rgbToName({ r, g, b });
+    rgb = rgbToRgb({ r, g, b });
+    hex = rgbToHex({ r, g, b });
+    cmyk = rgbToCmyk({ r, g, b });
+    pantone = rgbToPantone({ r, g, b });
+    ral = rgbToRal({ r, g, b });
+    lab = rgbToLab({ r, g, b });
+    hsl = rgbToHsl({ r, g, b });
   }
 
-  updateValues();
-
-  $: $previewState && updateValues();
-
   onMount(() => {
+    updateValues();
     colors = loadColors();
     colorOwner = colors.find((color) => color.id === id);
   });
 
   function saveAndClosePreview() {
-    const name = colorName || rgbToName(rgb_values);
+    const name = colorName || rgbToName({ r, g, b });
 
     saveColor({
-      rgb: rgb_values,
+      rgb: { r, g, b },
       name,
     });
 
@@ -79,8 +78,8 @@
 
   function updateName() {
     if ($previewState) return;
-    const name = colorName || rgbToName(rgb_values);
-    updateColor({ id, name, rgb: rgb_values });
+    const name = colorName || rgbToName({ r, g, b });
+    updateColor({ id, name, rgb: { r, g, b } });
   }
 </script>
 
@@ -134,7 +133,7 @@
       <button
         id="share"
         class="flex grow items-center justify-center gap-1 rounded-full border border-neutral-900/20 px-6 py-3"
-        on:click={() => shareColor({ name: colorName, rgb: rgb_values })}
+        on:click={() => shareColor({ name: colorName, rgb: { r, g, b } })}
       >
         <Share class="size-5" />
         <p class="text-sm">Compartir</p>

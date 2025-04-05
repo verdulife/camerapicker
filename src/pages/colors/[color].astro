@@ -11,7 +11,7 @@ const name = Astro.url.searchParams.get("name");
 
 if (!rgb) return Astro.redirect("/colors");
 
-const [r, g, b] = rgb ? rgb.split("-").map(Number) : [0, 0, 0];
+const [r, g, b] = rgb.split("-").map(Number);
 const rgb_values = { r, g, b };
 
 const colorName = rgbToName({ r, g, b });
