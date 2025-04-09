@@ -42,6 +42,7 @@ const { customTitle, customDescription, customImage } = Astro.props;
       property="og:description"
       content={customDescription || description}
     />
+    <meta property="og:logo" content="/logo-512.png" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={customTitle || title} />
     <meta
@@ -55,8 +56,8 @@ const { customTitle, customDescription, customImage } = Astro.props;
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "name": "Camera Picker",
-        "url": "https://camerapicker.vercel.app/"
+        "name": "HunterColor™",
+        "url": "https://huntercolor.vercel.app/"
       }
     </script>
 
