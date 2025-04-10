@@ -7,6 +7,7 @@
     analyzeColorToDominant,
     analyzeColorToPalette,
   } from "@/lib/analizer";
+  import Picture from "@/assets/Picture.svelte";
 
   let video: HTMLVideoElement;
   let canvas: HTMLCanvasElement;
@@ -96,11 +97,42 @@
   }
 
   $: if ($previewState) getPalette();
+
+  /* function loadImage() {
+    const input = document.createElement("input") as HTMLInputElement;
+    input.type = "file";
+    input.accept = "image/*";
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      const image = new Image();
+      image.src = URL.createObjectURL(file);
+      image.onload = () => {
+        if (!ctx) return;
+
+        URL.revokeObjectURL(image.src);
+        ctx.drawImage(image, 0, 0);
+        $analizer.x = targetSelection.x =
+          innerWidth / 2 - ($analizer.size * $analizer.zoom) / 2;
+        $analizer.y = targetSelection.y =
+          innerHeight / 2 - $analizer.size * $analizer.zoom;
+        targetSelection.zoom = $analizer.zoom;
+      };
+    };
+
+    input.click();
+  } */
 </script>
 
 <svelte:window on:resize={handleSize} />
 
-<img src="/logo.svg" alt="HunterColor logo" class="absolute inset-0 h-14 m-auto" />
+<img
+  src="/logo.svg"
+  alt="HunterColor logo"
+  class="absolute inset-0 h-14 m-auto"
+/>
 
 <video
   bind:this={video}
@@ -115,3 +147,7 @@
 
 <canvas bind:this={canvas} class="pointer-events-none absolute top-0 left-0">
 </canvas>
+
+<!-- <button class="fixed bottom-15 right-7 size-6" on:click={loadImage}>
+  <Picture class="size-full" />
+</button> -->
