@@ -1,8 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { isTouchDevice } from "@/lib/consts";
-  import { analizer, rgb_values } from "@/lib/stores";
-  import { drawAnalizer, analyzeColor } from "@/lib/analizer";
+  import { analizer, rgb_values, previewState, palette } from "@/lib/stores";
+  import {
+    drawAnalizer,
+    analyzeColorToDominant,
+    analyzeColorToPalette,
+  } from "@/lib/analizer";
 
   let video: HTMLVideoElement;
   let canvas: HTMLCanvasElement;
@@ -51,7 +55,7 @@
 
   async function animateSelection() {
     drawAnalizer(ctx, analizerCtx, $analizer, video, analizerCanvas);
-    const res = await analyzeColor(ctx, $analizer, analizerCanvas);
+    const res = await analyzeColorToDominant(ctx, $analizer, analizerCanvas);
 
     $analizer.x += (targetSelection.x - $analizer.x) * 0.2;
     $analizer.y += (targetSelection.y - $analizer.y) * 0.2;
@@ -73,7 +77,7 @@
     targetSelection.y = clientY - ($analizer.size * $analizer.zoom) / 2;
   }
 
-  function zoomAnalizer() {
+  /* function zoomAnalizer() {
     const currentZoom = Math.floor($analizer.zoom);
 
     if (currentZoom === 1) {
@@ -83,7 +87,15 @@
     if (currentZoom === 2) {
       targetSelection.zoom = 1.5;
     }
+  } */
+
+  async function getPalette() {
+    const res = await analyzeColorToPalette(ctx, $analizer, analizerCanvas);
+    if (!res) return;
+    $palette = res;
   }
+
+  $: if ($previewState) getPalette();
 </script>
 
 <svelte:window on:resize={handleSize} />
@@ -91,7 +103,6 @@
 <video
   bind:this={video}
   on:play={animateSelection}
-  on:dblclick={zoomAnalizer}
   playsinline
   autoplay
   muted

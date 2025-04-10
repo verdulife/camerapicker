@@ -107,7 +107,7 @@ export function drawAnalizer(
   ctx.stroke();
 }
 
-export async function analyzeColor(
+export async function analyzeColorToDominant(
   ctx: CanvasRenderingContext2D | null,
   selection: { x: number; y: number; size: number; zoom: number },
   analizerCanvas: HTMLCanvasElement
@@ -122,8 +122,36 @@ export async function analyzeColor(
   return new Promise((resolve) => {
     img.onload = () => {
       const colorThief = new ColorThief();
-      const [r, g, b] = colorThief.getColor(img)!;
+      const [r, g, b] = colorThief.getColor(img, 5)!;
+      const palette = colorThief.getPalette(img, 5, 5)!;
+      const colors = palette.map(([r, g, b]) => ({ r, g, b }));
+
       resolve({ r, g, b });
+    };
+  });
+}
+
+export async function analyzeColorToPalette(
+  ctx: CanvasRenderingContext2D | null,
+  selection: { x: number; y: number; size: number; zoom: number },
+  analizerCanvas: HTMLCanvasElement
+): Promise<Array<RGB> | undefined> {
+  if (!ctx) return;
+
+  ctx.getImageData(selection.x, selection.y, selection.size, selection.size);
+
+  const img = new Image();
+  img.src = analizerCanvas.toDataURL();
+
+  return new Promise((resolve) => {
+    img.onload = () => {
+      const colorThief = new ColorThief();
+      const palette = colorThief.getPalette(img, 6, 5)!;
+      const colors = palette.map(([r, g, b]) => ({ r, g, b }));
+
+      colors.shift();
+
+      resolve(colors);
     };
   });
 }

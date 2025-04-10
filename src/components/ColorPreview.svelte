@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { RGB, UserColorStorage } from "@/lib/types";
-  import { previewState } from "@/lib/stores";
+  import { previewState, palette } from "@/lib/stores";
   import {
     saveColor,
     shareColor,
@@ -29,7 +29,7 @@
   export let rgb_values: RGB;
   export let id: string;
 
-  const { r, g, b } = rgb_values;
+  let { r, g, b } = rgb_values;
 
   let colorName: string,
     rgb: string,
@@ -81,10 +81,18 @@
     const name = colorName || rgbToName({ r, g, b });
     updateColor({ id, name, rgb: { r, g, b } });
   }
+
+  function updateCurrentColor(values: RGB) {
+    r = values.r;
+    g = values.g;
+    b = values.b;
+    updateValues();
+    console.log(rgb);
+  }
 </script>
 
 <div class="flex flex-col size-full max-w-xl bg-white text-neutral-900">
-  <header>
+  <header class="relative flex flex-col">
     <figure
       id="colorPreview"
       style="background-color: {rgb}"
@@ -92,6 +100,47 @@
       class:aspect-video={$previewState}
       class:aspect-square={!$previewState}
     ></figure>
+
+    {#if $previewState}
+      <div
+        class="grid grid-cols-5 absolute bottom-0 left-0 w-full h-12 border-t border-neutral-800/20"
+      >
+        <button
+          aria-label="palette color"
+          style="background-color: {rgbToRgb($palette[0])}"
+          class="size-full cursor-pointer"
+          on:click={() => updateCurrentColor($palette[0])}
+        ></button>
+
+        <button
+          aria-label="palette color"
+          style="background-color: {rgbToRgb($palette[1])}"
+          class="size-full cursor-pointer"
+          on:click={() => updateCurrentColor($palette[1])}
+        ></button>
+
+        <button
+          aria-label="palette color"
+          style="background-color: {rgbToRgb($palette[2])}"
+          class="size-full cursor-pointer"
+          on:click={() => updateCurrentColor($palette[2])}
+        ></button>
+
+        <button
+          aria-label="palette color"
+          style="background-color: {rgbToRgb($palette[3])}"
+          class="size-full cursor-pointer"
+          on:click={() => updateCurrentColor($palette[3])}
+        ></button>
+
+        <button
+          aria-label="palette color"
+          style="background-color: {rgbToRgb($palette[4])}"
+          class="size-full cursor-pointer"
+          on:click={() => updateCurrentColor($palette[4])}
+        ></button>
+      </div>
+    {/if}
   </header>
 
   <main class="px-5 pt-5">
