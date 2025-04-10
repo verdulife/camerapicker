@@ -14,4 +14,4 @@ Captura colores con tu teléfono o tableta, guarda tus favoritos y compártelos.
 
 ## ⚡ Feedback
 
-Esto es una versión Beta de HunterColor™. Si tienes algún comentario o sugerencia, por favor, enviame un [email](verdu@live.com). Gracias por usar HunterColor™.
+Esto es una versión Beta de HunterColor™. Si tienes algún comentario o sugerencia, por favor, enviame un [email](mailto:verdu@live.com). Gracias por usar HunterColor™.
