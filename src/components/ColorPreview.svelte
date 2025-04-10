@@ -73,7 +73,7 @@
   function deleteAndBack() {
     if (!colorOwner) return;
     deleteColor(colorOwner);
-    window.history.back();
+    location.href = location.origin + "/colors";
   }
 
   function updateName() {

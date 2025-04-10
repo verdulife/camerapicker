@@ -20,18 +20,18 @@
     return 0;
   }
 
-  function filterByTerm(color) {
+  function filterByTerm({ name }) {
     if (term.length === 0) return true;
-    return color.name.toLowerCase().includes(term.toLowerCase());
+    return name.toLowerCase().includes(term.toLowerCase());
   }
 
-  $: filterColors = colors.filter(filterByTerm).sort(sortByColor);
+  $: filterColors = () => colors.filter(filterByTerm).sort(sortByColor);
 </script>
 
 <!-- <header class="fixed top-0 right-0 z-20 p-4">
   <Filter bind:term bind:sort />
-</header> -->
-
+</header>
+ -->
 {#if !colors || colors.length === 0}
   <section
     class="flex w-full flex-1 flex-col items-center justify-center gap-2"
@@ -42,7 +42,7 @@
   <section
     class="grid w-full max-w-6xl grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2"
   >
-    {#each filterColors as color}
+    {#each filterColors() as color}
       <ColorCard {color} />
     {/each}
   </section>
