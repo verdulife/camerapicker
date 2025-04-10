@@ -84,5 +84,17 @@ const { customTitle, customDescription, customImage } = Astro.props;
     <Corner
       class="pointer-events-none fixed bottom-0 left-0 z-40 size-6 -rotate-90 text-black"
     />
+
+    <pwa-install manifest-url="/manifest.json"> </pwa-install>
   </body>
 </html>
+
+<script>
+  import "@khmyznikov/pwa-install";
+
+  const startSize = { width: 400, height: 900 };
+
+  window.addEventListener("resize", () => {
+    window.resizeTo(startSize.width, startSize.height);
+  });
+</script>
