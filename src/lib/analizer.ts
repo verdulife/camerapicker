@@ -5,7 +5,7 @@ export function drawAnalizer(
   ctx: CanvasRenderingContext2D | null,
   analizerCtx: CanvasRenderingContext2D | null,
   selection: { x: number; y: number; size: number; zoom: number },
-  video: HTMLVideoElement,
+  canvasSource: HTMLVideoElement | HTMLImageElement,
   analizerCanvas: HTMLCanvasElement
 ) {
   if (!ctx || !analizerCtx) return;
@@ -28,7 +28,7 @@ export function drawAnalizer(
 
   // Analizer video
   analizerCtx.drawImage(
-    video,
+    canvasSource,
     selection.x + selection.size / 2,
     selection.y + selection.size / 2,
     selection.size,

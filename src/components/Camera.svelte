@@ -10,11 +10,14 @@
   import Picture from "@/assets/Picture.svelte";
 
   let video: HTMLVideoElement;
+  let image: HTMLImageElement;
+  let imageSrc = "";
   let canvas: HTMLCanvasElement;
   let analizerCanvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D | null,
     analizerCtx: CanvasRenderingContext2D | null;
   let targetSelection = { x: 0, y: 0, zoom: 0 };
+  let canvasSource: HTMLVideoElement | HTMLImageElement;
 
   onMount(handleSize);
 
@@ -31,6 +34,7 @@
     });
 
     video.srcObject = stream;
+    canvasSource = video;
 
     ctx = canvas.getContext("2d", {
       willReadFrequently: true,
@@ -55,7 +59,7 @@
   }
 
   async function animateSelection() {
-    drawAnalizer(ctx, analizerCtx, $analizer, video, analizerCanvas);
+    drawAnalizer(ctx, analizerCtx, $analizer, canvasSource, analizerCanvas);
     const res = await analyzeColorToDominant(ctx, $analizer, analizerCanvas);
 
     $analizer.x += (targetSelection.x - $analizer.x) * 0.2;
@@ -78,18 +82,6 @@
     targetSelection.y = clientY - ($analizer.size * $analizer.zoom) / 2;
   }
 
-  /* function zoomAnalizer() {
-    const currentZoom = Math.floor($analizer.zoom);
-
-    if (currentZoom === 1) {
-      targetSelection.zoom = 2.5;
-    }
-
-    if (currentZoom === 2) {
-      targetSelection.zoom = 1.5;
-    }
-  } */
-
   async function getPalette() {
     const res = await analyzeColorToPalette(ctx, $analizer, analizerCanvas);
     if (!res) return;
@@ -98,7 +90,7 @@
 
   $: if ($previewState) getPalette();
 
-  /* function loadImage() {
+  function loadImage() {
     const input = document.createElement("input") as HTMLInputElement;
     input.type = "file";
     input.accept = "image/*";
@@ -108,22 +100,16 @@
       if (!file) return;
 
       const image = new Image();
-      image.src = URL.createObjectURL(file);
+      image.width = window.innerWidth;
+      image.height = window.innerHeight;
+      image.src = imageSrc = URL.createObjectURL(file);
       image.onload = () => {
-        if (!ctx) return;
-
-        URL.revokeObjectURL(image.src);
-        ctx.drawImage(image, 0, 0);
-        $analizer.x = targetSelection.x =
-          innerWidth / 2 - ($analizer.size * $analizer.zoom) / 2;
-        $analizer.y = targetSelection.y =
-          innerHeight / 2 - $analizer.size * $analizer.zoom;
-        targetSelection.zoom = $analizer.zoom;
+        canvasSource = image;
       };
     };
 
     input.click();
-  } */
+  }
 </script>
 
 <svelte:window on:resize={handleSize} />
@@ -136,18 +122,30 @@
 
 <video
   bind:this={video}
-  on:play={animateSelection}
   playsinline
   autoplay
   muted
   class="absolute top-0 left-0 size-full"
+  on:play={animateSelection}
   on:click={updateSelection}
 >
 </video>
 
+{#if imageSrc}
+  <button on:click={updateSelection}>
+    <img
+      bind:this={image}
+      src={imageSrc}
+      alt="Imagen cargada"
+      class="absolute inset-0 size-full object-cover"
+      on:load={animateSelection}
+    />
+  </button>
+{/if}
+
 <canvas bind:this={canvas} class="pointer-events-none absolute top-0 left-0">
 </canvas>
 
-<!-- <button class="fixed bottom-15 right-7 size-6" on:click={loadImage}>
+<!-- <button class="fixed top-6 right-6 size-12 p-3" on:click={loadImage}>
   <Picture class="size-full" />
 </button> -->
