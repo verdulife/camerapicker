@@ -3,9 +3,8 @@
   import { userColorToUrl } from "@/lib/utils";
 
   export let color;
-  const { id, name, rgb } = color;
-  const { r, g, b } = rgb;
 
+  const { id, name, rgb } = color;
   const rgbOut = rgbToRgb(rgb);
 </script>
 
@@ -25,6 +24,7 @@
 
     <footer class="flex w-full flex-col text-left text-neutral-800">
       <h2 class="font-bold">{name}</h2>
+      <p class="text-sm">{rgbOut}</p>
     </footer>
   </a>
 </article>

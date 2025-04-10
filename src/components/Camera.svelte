@@ -100,6 +100,8 @@
 
 <svelte:window on:resize={handleSize} />
 
+<img src="/logo.svg" alt="HunterColor logo" class="absolute inset-0 h-14 m-auto" />
+
 <video
   bind:this={video}
   on:play={animateSelection}
@@ -110,5 +112,6 @@
   on:click={updateSelection}
 >
 </video>
+
 <canvas bind:this={canvas} class="pointer-events-none absolute top-0 left-0">
 </canvas>
