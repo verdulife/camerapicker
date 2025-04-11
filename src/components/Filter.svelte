@@ -7,7 +7,7 @@
 </script>
 
 <search class="flex gap-2 h-11 rounded-full">
-  <!-- <form
+  <form
     class="flex items-center bg-black border border-neutral-900/10 rounded-full"
   >
     <label class="flex h-full">
@@ -22,7 +22,7 @@
         bind:value={term}
       />
     </label>
-  </form> -->
+  </form>
 
   <button
     id="sortFilter"

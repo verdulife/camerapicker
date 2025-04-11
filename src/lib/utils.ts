@@ -1,6 +1,7 @@
 import type { RGB, UserColor, UserColorStorage, UserColorUrl } from "@/lib/types";
 import { toast_messages } from "@/lib/consts";
 import { nanoid } from "nanoid";
+import { rgbToHsl } from "./colors";
 
 export function saveColor(color: UserColor) {
   const colorToStore: UserColorStorage = {
@@ -83,7 +84,14 @@ export function userColorToUrl({ name, rgb, id }: UserColorUrl) {
 }
 
 export function sortByColor(a: UserColorStorage, b: UserColorStorage) {
-  if (a.rgb.r + a.rgb.g + a.rgb.b > b.rgb.r + b.rgb.g + b.rgb.b) return -1;
-  if (a.rgb.r + a.rgb.g + a.rgb.b < b.rgb.r + b.rgb.g + b.rgb.b) return 1;
+  const ahsl = rgbToHsl(a.rgb);
+  const bhsl = rgbToHsl(b.rgb);
+
+  const aHue = ahsl.split(" ")[0];
+  const bHue = bhsl.split(" ")[0];
+
+  if (aHue < bHue) return -1;
+  if (aHue > bHue) return 1;
+
   return 0;
 }

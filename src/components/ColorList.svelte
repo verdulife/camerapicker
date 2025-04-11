@@ -1,21 +1,22 @@
 <script>
   import { onMount } from "svelte";
-  import { sortByColor } from "@/lib/utils";
-  import ColorCard from "@/components/ColorCard.svelte";
+  import { sortByColor, userColorToUrl } from "@/lib/utils";
   import Filter from "@/components/Filter.svelte";
+  import { rgbToRgb } from "@/lib/colors";
 
   let colors = [];
   let grid = true;
   let term = "";
 
   onMount(() => {
-    colors = JSON.parse(localStorage.getItem("hc_colors"));
+    colors = JSON.parse(localStorage.getItem("hc_colors")).sort(sortByColor);
   });
 
   $: filteredColors = colors.filter((item) => {
-    console.log(item);
+    const searchTerm = term.toLowerCase();
+    const name = item.name.toLowerCase();
 
-    return item.name.indexOf(term) !== -1;
+    return name.includes(searchTerm);
   });
 </script>
 
@@ -36,7 +37,27 @@
       : 'grid-cols-1'} sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2"
   >
     {#each filteredColors as color}
-      <ColorCard {color} {grid} />
+      <article
+        class="w-full rounded-xl border border-neutral-800/10 bg-white p-2 shadow"
+      >
+        <a
+          href={userColorToUrl(color)}
+          aria-label={color.name}
+          class="flex w-full {grid && 'flex-col'} items-center gap-2"
+        >
+          <figure
+            style={`background-color: ${rgbToRgb(color.rgb)}`}
+            class="aspect-square {grid
+              ? 'w-full'
+              : 'w-18'} rounded-md border border-neutral-800/10"
+          ></figure>
+
+          <footer class="flex w-full flex-col text-left text-neutral-800">
+            <h2 class="font-bold">{color.name}</h2>
+            <p class="text-sm">{rgbToRgb(color.rgb)}</p>
+          </footer>
+        </a>
+      </article>
     {/each}
   </section>
 {/if}
