@@ -122,7 +122,7 @@ export async function analyzeColorToDominant(
   return new Promise((resolve) => {
     img.onload = () => {
       const colorThief = new ColorThief();
-      const [r, g, b] = colorThief.getColor(img, 5)!;
+      const [r, g, b] = colorThief.getColor(img, 1)!;
 
       resolve({ r, g, b });
     };

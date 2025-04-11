@@ -110,7 +110,7 @@
           <button
             aria-label="palette color"
             style="background-color: {rgbToRgb(color)}"
-            class="h-full aspect-square cursor-pointer rounded-full border border-neutral-800/10 outline-white"
+            class="h-full aspect-square cursor-pointer rounded-full border border-neutral-800/10 outline-white outline-2"
             class:outline-2={isSelected(color)}
             on:click={() => updateCurrentColor(color)}
           >
