@@ -88,6 +88,10 @@
     b = values.b;
     updateValues();
   }
+
+  function isSelected(color: RGB) {
+    return color.r === r && color.g === g && color.b === b;
+  }
 </script>
 
 <div class="flex flex-col size-full max-w-xl bg-white text-neutral-900">
@@ -101,43 +105,17 @@
     ></figure>
 
     {#if $previewState}
-      <div
-        class="grid grid-cols-5 absolute bottom-0 left-0 w-full h-12 border-t border-neutral-800/20"
-      >
-        <button
-          aria-label="palette color"
-          style="background-color: {rgbToRgb($palette[0])}"
-          class="size-full cursor-pointer"
-          on:click={() => updateCurrentColor($palette[0])}
-        ></button>
-
-        <button
-          aria-label="palette color"
-          style="background-color: {rgbToRgb($palette[1])}"
-          class="size-full cursor-pointer"
-          on:click={() => updateCurrentColor($palette[1])}
-        ></button>
-
-        <button
-          aria-label="palette color"
-          style="background-color: {rgbToRgb($palette[2])}"
-          class="size-full cursor-pointer"
-          on:click={() => updateCurrentColor($palette[2])}
-        ></button>
-
-        <button
-          aria-label="palette color"
-          style="background-color: {rgbToRgb($palette[3])}"
-          class="size-full cursor-pointer"
-          on:click={() => updateCurrentColor($palette[3])}
-        ></button>
-
-        <button
-          aria-label="palette color"
-          style="background-color: {rgbToRgb($palette[4])}"
-          class="size-full cursor-pointer"
-          on:click={() => updateCurrentColor($palette[4])}
-        ></button>
+      <div class="flex absolute bottom-4 left-4 gap-2 right-4 h-14">
+        {#each $palette as color}
+          <button
+            aria-label="palette color"
+            style="background-color: {rgbToRgb(color)}"
+            class="h-full aspect-square cursor-pointer rounded-full border border-neutral-800/10 outline-white"
+            class:outline-2={isSelected(color)}
+            on:click={() => updateCurrentColor(color)}
+          >
+          </button>
+        {/each}
       </div>
     {/if}
   </header>
