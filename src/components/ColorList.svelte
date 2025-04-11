@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { sortByColor, userColorToUrl } from "@/lib/utils";
+  import { loadView, sortByColor, userColorToUrl } from "@/lib/utils";
   import Filter from "@/components/Filter.svelte";
   import { rgbToRgb } from "@/lib/colors";
 
@@ -10,6 +10,7 @@
 
   onMount(() => {
     colors = JSON.parse(localStorage.getItem("hc_colors")).sort(sortByColor);
+    grid = loadView();
   });
 
   $: filteredColors = colors.filter((item) => {

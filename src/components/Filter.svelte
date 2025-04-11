@@ -1,9 +1,15 @@
-<script>
+<script lang="ts">
   import Search from "@/assets/Search.svelte";
   import Grid from "@/assets/Grid.svelte";
   import List from "@/assets/List.svelte";
+  import { saveView } from "@/lib/utils";
 
-  export let term, grid;
+  export let term: string, grid: boolean;
+
+  function setView() {
+    grid = !grid;
+    saveView(grid);
+  }
 </script>
 
 <search class="flex gap-2 h-11 rounded-full">
@@ -18,7 +24,7 @@
         id="inputFilter"
         size="14"
         placeholder="Buscar por nombre"
-        class="outline-none h-full text-sm pr-4"
+        class="outline-none h-full pr-4"
         bind:value={term}
       />
     </label>
@@ -28,7 +34,7 @@
     id="sortFilter"
     class="bg-black border border-neutral-900/10 rounded-full h-full aspect-square flex justify-center items-center"
     class:rotate-180={grid}
-    on:click={() => (grid = !grid)}
+    on:click={setView}
   >
     {#if grid}
       <List class="size-4" />

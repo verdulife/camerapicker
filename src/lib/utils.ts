@@ -1,7 +1,19 @@
-import type { RGB, UserColor, UserColorStorage, UserColorUrl } from "@/lib/types";
-import { toast_messages } from "@/lib/consts";
+import type { UserColor, UserColorStorage, UserColorUrl } from "@/lib/types";
 import { nanoid } from "nanoid";
-import { rgbToHsl } from "./colors";
+import { toast_messages } from "@/lib/consts";
+import { rgbToHsl } from "@/lib/colors";
+
+export function saveView(grid: boolean) {
+  const json = JSON.stringify({ grid });
+  localStorage.setItem("hc_view", json);
+}
+
+export function loadView(): boolean {
+  const localView = localStorage.getItem("hc_view");
+
+  if (localView) return JSON.parse(localView).grid;
+  else return true;
+}
 
 export function saveColor(color: UserColor) {
   const colorToStore: UserColorStorage = {
