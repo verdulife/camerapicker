@@ -123,8 +123,6 @@ export async function analyzeColorToDominant(
     img.onload = () => {
       const colorThief = new ColorThief();
       const [r, g, b] = colorThief.getColor(img, 5)!;
-      const palette = colorThief.getPalette(img, 5, 5)!;
-      const colors = palette.map(([r, g, b]) => ({ r, g, b }));
 
       resolve({ r, g, b });
     };
@@ -146,7 +144,7 @@ export async function analyzeColorToPalette(
   return new Promise((resolve) => {
     img.onload = () => {
       const colorThief = new ColorThief();
-      const palette = colorThief.getPalette(img, 5, 5)!;
+      const palette = colorThief.getPalette(img, 5, 1)!;
       const colors = palette.map(([r, g, b]) => ({ r, g, b }));
 
       resolve(colors);
