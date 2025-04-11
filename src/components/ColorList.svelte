@@ -21,7 +21,7 @@
   });
 </script>
 
-<header class="fixed top-0 right-0 z-20 p-4">
+<header class="fixed top-0 right-0 z-20 p-4 w-[calc(100%-80px)]">
   <Filter bind:term bind:grid />
 </header>
 

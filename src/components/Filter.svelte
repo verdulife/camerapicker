@@ -12,19 +12,18 @@
   }
 </script>
 
-<search class="flex gap-2 h-11 rounded-full">
+<search class="flex gap-2 h-11 rounded-full w-full">
   <form
     class="flex items-center bg-black border border-neutral-900/10 rounded-full"
   >
-    <label class="flex h-full">
+    <label class="flex size-full justify-end">
       <Search class="h-full p-3 text-neutral-400" />
 
       <input
         type="text"
         id="inputFilter"
-        size="14"
         placeholder="Buscar por nombre"
-        class="outline-none h-full pr-4"
+        class="outline-none size-full pr-4"
         bind:value={term}
       />
     </label>
