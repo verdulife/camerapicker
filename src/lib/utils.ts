@@ -81,3 +81,9 @@ export function userColorToUrl({ name, rgb, id }: UserColorUrl) {
   const { r, g, b } = rgb;
   return `colors/color?name=${name}&rgb=${r}-${g}-${b}&id=${id}`;
 }
+
+export function sortByColor(a: UserColorStorage, b: UserColorStorage) {
+  if (a.rgb.r + a.rgb.g + a.rgb.b > b.rgb.r + b.rgb.g + b.rgb.b) return -1;
+  if (a.rgb.r + a.rgb.g + a.rgb.b < b.rgb.r + b.rgb.g + b.rgb.b) return 1;
+  return 0;
+}

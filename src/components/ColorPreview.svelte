@@ -87,7 +87,6 @@
     g = values.g;
     b = values.b;
     updateValues();
-    console.log(rgb);
   }
 </script>
 

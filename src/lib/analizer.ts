@@ -146,10 +146,8 @@ export async function analyzeColorToPalette(
   return new Promise((resolve) => {
     img.onload = () => {
       const colorThief = new ColorThief();
-      const palette = colorThief.getPalette(img, 6, 5)!;
+      const palette = colorThief.getPalette(img, 5, 5)!;
       const colors = palette.map(([r, g, b]) => ({ r, g, b }));
-
-      colors.shift();
 
       resolve(colors);
     };

@@ -1,18 +1,17 @@
 <script>
   import Search from "@/assets/Search.svelte";
-  import Sort from "@/assets/Sort.svelte";
+  import Grid from "@/assets/Grid.svelte";
+  import List from "@/assets/List.svelte";
 
-  export let term, sort;
+  export let term, grid;
 </script>
 
-<search
-  class="flex overflow-hidden gap-2 size-11 focus-within:w-auto transition rounded-full"
->
-  <form
+<search class="flex gap-2 h-11 rounded-full">
+  <!-- <form
     class="flex items-center bg-black border border-neutral-900/10 rounded-full"
   >
-    <label class="flex shrink-0 h-full">
-      <Search class="h-full p-2 text-neutral-400" />
+    <label class="flex h-full">
+      <Search class="h-full p-3 text-neutral-400" />
 
       <input
         type="text"
@@ -23,14 +22,18 @@
         bind:value={term}
       />
     </label>
-  </form>
+  </form> -->
 
   <button
     id="sortFilter"
     class="bg-black border border-neutral-900/10 rounded-full h-full aspect-square flex justify-center items-center"
-    class:rotate-180={sort}
-    on:click={() => (sort = !sort)}
+    class:rotate-180={grid}
+    on:click={() => (grid = !grid)}
   >
-    <Sort class="size-4" />
+    {#if grid}
+      <List class="size-4" />
+    {:else}
+      <Grid class="size-4" />
+    {/if}
   </button>
 </search>

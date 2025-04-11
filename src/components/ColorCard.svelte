@@ -2,7 +2,7 @@
   import { rgbToRgb } from "@/lib/colors";
   import { userColorToUrl } from "@/lib/utils";
 
-  export let color;
+  export let color, grid;
 
   const { id, name, rgb } = color;
   const rgbOut = rgbToRgb(rgb);
@@ -10,16 +10,18 @@
 
 <article
   id={`hc_${id}`}
-  class="flex w-full flex-col rounded-xl border border-neutral-800/10 bg-white p-2 shadow gap-1"
+  class="w-full rounded-xl border border-neutral-800/10 bg-white p-2 shadow"
 >
   <a
     href={userColorToUrl(color)}
     aria-label={name}
-    class="flex w-full flex-col gap-2"
+    class="flex w-full {grid && 'flex-col'} items-center gap-2"
   >
     <figure
       style={`background-color: ${rgbOut}`}
-      class="aspect-square w-full rounded-md border border-neutral-800/10"
+      class="aspect-square {grid
+        ? 'w-full'
+        : 'w-18'} rounded-md border border-neutral-800/10"
     ></figure>
 
     <footer class="flex w-full flex-col text-left text-neutral-800">
