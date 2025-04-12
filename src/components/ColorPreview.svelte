@@ -19,11 +19,12 @@
     rgbToRal,
     rgbToRgb,
   } from "@/lib/colors";
+  import { onMount } from "svelte";
   import Dots from "@/assets/Dots.svelte";
   import Colors from "@/assets/Colors.svelte";
   import Share from "@/assets/Share.svelte";
   import Edit from "@/assets/Edit.svelte";
-  import { onMount } from "svelte";
+  import Close from "@/assets/Close.svelte";
 
   export let name: string;
   export let rgb_values: RGB;
@@ -99,9 +100,7 @@
     <figure
       id="colorPreview"
       style="background-color: {rgb}"
-      class="w-full border-b border-neutral-800/10 px-5 max-h-[40svh]"
-      class:aspect-video={$previewState}
-      class:aspect-square={!$previewState}
+      class="w-full border-b border-neutral-800/10 px-5 max-h-[40svh] aspect-square"
     ></figure>
 
     {#if $previewState}
@@ -117,6 +116,15 @@
           </button>
         {/each}
       </div>
+
+      <button
+        class="absolute right-3 top-3 p-3"
+        on:click={() => ($previewState = false)}
+      >
+        <Close
+          class="size-7 text-[gray] mix-blend-difference contrast-[9999] opacity-50"
+        />
+      </button>
     {/if}
   </header>
 
